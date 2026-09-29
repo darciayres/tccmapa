@@ -269,7 +269,14 @@ body.menu-open .drawer { transform: translateX(0); }
   margin: 0;
 }
 
-.body-col .hero-title { text-align: center; }
+/* Mesma coluna de 600px do .intro, para o título alinhar com a margem do texto */
+.body-col .hero-title {
+  width: 100%;
+  max-width: 600px;
+  align-self: center;
+  font-family: 'Newsreader', Georgia, serif;
+  text-align: left;
+}
 
 /* ---------- Texto introdutório (frame "teste_textos" no Figma) ---------- */
 
@@ -296,8 +303,6 @@ body.menu-open .drawer { transform: translateX(0); }
   line-height: 24px;
 }
 
-.intro__lead-in { padding-top: 16px; }
-
 .intro__quote {
   margin: 0;
   padding: 16px 10px 20px;
@@ -321,6 +326,7 @@ body.menu-open .drawer { transform: translateX(0); }
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-top: 16px;
   font-size: 16px;
   line-height: 24px;
 }
