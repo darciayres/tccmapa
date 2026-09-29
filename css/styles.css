@@ -548,7 +548,7 @@ body.menu-open .drawer { transform: translateX(0); }
     gap: 12px;
   }
 
-  /* 12px entre fotos e título vêm só do padding-bottom da tira de fotos */
+  /* O espaço entre fotos e título vem só do padding-bottom da tira de fotos */
   .body-col { padding-top: 0; }
 
   /* No mobile do Figma, a tira de fotos vem antes do título/corpo */
@@ -576,7 +576,7 @@ body.menu-open .drawer { transform: translateX(0); }
     overflow-x: auto;
     overflow-y: visible;
     margin: 0 -24px;
-    padding: 0 24px 12px;
+    padding: 0 24px 40px;
     gap: 12px;
     -webkit-overflow-scrolling: touch;
     width: calc(100% + 48px);
