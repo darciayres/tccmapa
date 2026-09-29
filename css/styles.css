@@ -269,6 +269,16 @@ body.menu-open .drawer { transform: translateX(0); }
 
 /* Proporção fixa = a da imagem (852×704), para que as % dos pins
    apontem sempre para o mesmo ponto do mapa em qualquer tamanho. */
+.body-col .hero-title { text-align: center; }
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hero-text .hero-body { text-indent: 1em; }
+
 .map {
   position: relative;
   border-radius: 13px;
