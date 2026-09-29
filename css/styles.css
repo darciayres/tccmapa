@@ -322,6 +322,8 @@ body.menu-open .drawer { transform: translateX(0); }
 .intro__lead-out,
 .intro__body p { text-indent: 0.75em; }
 
+.intro__highlight { color: var(--blue); }
+
 .intro__body {
   display: flex;
   flex-direction: column;
