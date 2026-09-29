@@ -235,8 +235,10 @@ body.menu-open .drawer { transform: translateX(0); }
 }
 
 /* Reserva espaço para a coluna de fotos fixa (só existe na home) */
+/* padding-left 48px = mesmo espaço do lado das fotos (24px daqui + 24px do padding de .photos) */
 .content--with-photos {
   margin-right: var(--photos-w);
+  padding-left: 48px;
 }
 
 .body-col {
@@ -319,6 +321,10 @@ body.menu-open .drawer { transform: translateX(0); }
   .pin:hover img.pin__default { opacity: 0; }
   .pin:hover img.pin__hover { opacity: 1; }
 }
+
+/* Pin aceso pelo hover na foto correspondente (desktop) */
+.pin.is-linked-hover img.pin__default { opacity: 0; }
+.pin.is-linked-hover img.pin__hover { opacity: 1; }
 
 /* Touch: 1º toque seleciona o pin (estado "hoover" do Pin_Mobile no Figma) */
 .pin.is-selected { z-index: 3; }
@@ -480,8 +486,8 @@ body.menu-open .drawer { transform: translateX(0); }
 
   .app { display: block; }
 
-  .content { display: flex; flex-direction: column; padding: 24px; margin-left: 0; min-width: 0; }
-  .content--with-photos { margin-right: 0; }
+  .content { display: flex; flex-direction: column; gap: 0; padding: 24px; margin-left: 0; min-width: 0; }
+  .content--with-photos { margin-right: 0; padding-left: 24px; }
 
   .body-col, .article-col {
     width: 100%;
@@ -489,6 +495,9 @@ body.menu-open .drawer { transform: translateX(0); }
     padding: 12px 0 0 0;
     gap: 12px;
   }
+
+  /* 12px entre fotos e título vêm só do padding-bottom da tira de fotos */
+  .body-col { padding-top: 0; }
 
   /* No mobile do Figma, a tira de fotos vem antes do título/corpo */
   .photos { order: -1; }
@@ -503,21 +512,32 @@ body.menu-open .drawer { transform: translateX(0); }
 
   .hero-body { text-align: left; }
 
+  /* A tira vaza o padding de 24px do .content (margem negativa) para as
+     fotos irem até a borda da tela; o padding interno mantém a 1ª e a
+     última foto alinhadas a 24px, como o texto. */
   .photos {
     position: static;
     flex-direction: row;
     overflow-x: auto;
     overflow-y: visible;
-    padding: 0 0 12px 0;
+    margin: 0 -24px;
+    padding: 0 24px 12px;
     gap: 12px;
     -webkit-overflow-scrolling: touch;
-    width: 100%;
+    width: calc(100% + 48px);
     height: auto;
     background: transparent;
     min-width: 0;
   }
 
   .photo-card { flex: 0 0 auto; width: 328px; height: 180px; }
+
+  /* No touch a tira é arrastada com o dedo; sem a barra de rolagem o
+     espaço até o título fica exatamente nos 12px */
+  @media (hover: none) {
+    .photos { scrollbar-width: none; }
+    .photos::-webkit-scrollbar { display: none; }
+  }
 
   .article-hero { height: 220px; }
 }

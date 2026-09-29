@@ -30,7 +30,7 @@
 })();
 
 // Mapa interativo
-// Mouse: hover num pin destaca a foto da matéria correspondente.
+// Mouse: hover num pin destaca a foto da matéria correspondente, e vice-versa.
 // Touch: 1º toque seleciona o pin (etiqueta do Pin_Mobile + foto destacada),
 //        2º toque no pin ou na etiqueta abre a matéria. Fotos seguem o mesmo padrão.
 (function () {
@@ -122,6 +122,16 @@
   }
 
   document.querySelectorAll('.photo-card').forEach((photo) => {
+    const pin = document.querySelector('.pin[data-materia="' + photo.dataset.materia + '"]');
+    if (pin) {
+      const on = () => { if (!isTouch()) pin.classList.add('is-linked-hover'); };
+      const off = () => { if (!isTouch()) pin.classList.remove('is-linked-hover'); };
+      photo.addEventListener('mouseenter', on);
+      photo.addEventListener('mouseleave', off);
+      photo.addEventListener('focus', on);
+      photo.addEventListener('blur', off);
+    }
+
     photo.addEventListener('click', (e) => {
       if (!isTouch() || photo.classList.contains('is-linked-hover')) return;
       e.preventDefault();
