@@ -1,0 +1,513 @@
+/* Veias do Recife — estilos compartilhados
+   Tokens extraídos do Figma (arquivo "Paula", frames Desktop - 1 e Mobile) */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Roboto:ital,wght@0,400;0,500;0,700;0,800&display=swap');
+
+:root {
+  --blue: #435bd3;
+  --blue-selected: #2f47c1;
+  --yellow: #facc15;
+  --bg: #fafaf9;
+  --accent: #5b77ff;
+  --black: #000000;
+  --sidebar-w: 270px;
+  --photos-w: 321px;
+  --content-gap: 48px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--black);
+  font-family: 'Roboto', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+
+img { display: block; max-width: 100%; }
+
+/* ---------- Layout shell ---------- */
+
+.app {
+  min-height: 100vh;
+}
+
+/* ---------- Sidebar (desktop) ---------- */
+/* Fixa de verdade no viewport (não apenas sticky no fluxo), assim nunca
+   é cortada por scroll horizontal do conteúdo ao lado. */
+
+.sidebar {
+  background: var(--blue);
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+  padding: 56px 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.brand__avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.brand__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brand__name {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.1;
+  color: var(--yellow);
+  text-align: center;
+  white-space: normal;
+  max-width: 100%;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.nav__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 4px 28px 4px 16px;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 36px;
+  white-space: nowrap;
+  transition: background-color 0.3s ease-out;
+}
+
+.nav__item:hover {
+  background: var(--blue-selected);
+}
+
+.nav__item.is-active {
+  background: var(--blue-selected);
+  color: var(--yellow);
+}
+
+/* ---------- Mobile top bar ---------- */
+
+.topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--blue);
+  padding: 12px 24px;
+  padding-top: max(12px, env(safe-area-inset-top));
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+}
+
+.topbar .brand,
+.drawer__top .brand {
+  flex-direction: row;
+  width: auto;
+}
+
+.topbar .brand__avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.topbar .brand__name {
+  font-size: 20px;
+  line-height: 26px;
+  white-space: nowrap;
+}
+
+.drawer__top .brand__name {
+  white-space: nowrap;
+}
+
+.topbar__menu-btn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.topbar__menu-btn img { width: 32px; height: 32px; }
+
+/* ---------- Mobile nav drawer ---------- */
+
+.drawer-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 30;
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 270px;
+  max-width: 82vw;
+  background: var(--blue);
+  z-index: 31;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 32px 24px;
+  padding-top: max(32px, env(safe-area-inset-top));
+  transform: translateX(100%);
+  transition: transform 0.3s ease-out;
+  overflow-y: auto;
+}
+
+body.menu-open .drawer-scrim { display: block; opacity: 1; }
+body.menu-open .drawer { transform: translateX(0); }
+
+.drawer__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer__close {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.drawer .nav__item { font-size: 22px; }
+
+/* ---------- Main content ---------- */
+
+.content {
+  display: flex;
+  gap: var(--content-gap);
+  align-items: flex-start;
+  justify-content: center;
+  margin-left: var(--sidebar-w);
+  padding: 0 24px;
+  min-width: 0;
+}
+
+/* Reserva espaço para a coluna de fotos fixa (só existe na home) */
+.content--with-photos {
+  margin-right: var(--photos-w);
+}
+
+.body-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1 1 auto;
+  max-width: 100%;
+  min-width: 0;
+  padding: 24px 0;
+}
+
+.hero-title {
+  font-weight: 500;
+  font-size: 57px;
+  line-height: 64px;
+  letter-spacing: -1px;
+  margin: 0;
+}
+
+.hero-body {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.5px;
+  text-align: justify;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* Proporção fixa = a da imagem (852×704), para que as % dos pins
+   apontem sempre para o mesmo ponto do mapa em qualquer tamanho. */
+.map {
+  position: relative;
+  border-radius: 13px;
+  aspect-ratio: 852 / 704;
+  flex: none;
+}
+
+.map img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 13px;
+}
+
+/* left/top marcam a PONTA do pin (em % do mapa); o ícone escala com o
+   mapa (máx. 31×44, tamanho do Figma) e cresce para cima a partir da ponta. */
+.pin {
+  position: absolute;
+  display: block;
+  width: clamp(18px, 4.5%, 31px);
+  aspect-ratio: 31 / 44;
+  transform: translate(-50%, -100%);
+  cursor: pointer;
+}
+
+.pin img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.2s ease-out;
+}
+
+.pin img.pin__hover { opacity: 0; }
+
+/* Em touch o :hover "gruda" depois do toque, então só vale com mouse */
+@media (hover: hover) {
+  .pin:hover img.pin__default { opacity: 0; }
+  .pin:hover img.pin__hover { opacity: 1; }
+}
+
+/* Touch: 1º toque seleciona o pin (estado "hoover" do Pin_Mobile no Figma) */
+.pin.is-selected { z-index: 3; }
+.pin.is-selected img.pin__default { opacity: 0; }
+.pin.is-selected img.pin__hover { opacity: 1; }
+
+.pin__label {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  width: 128px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(calc(-50% + var(--label-shift, 0px))) translateY(4px);
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
+}
+
+.pin.is-selected .pin__label {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(calc(-50% + var(--label-shift, 0px)));
+}
+
+.map .pin .pin__label img {
+  position: static;
+  width: 100%;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: -4px;
+}
+
+.pin__label span {
+  position: relative;
+  padding: 4px 8px;
+  background: var(--accent);
+  border-radius: 0 0 4px 4px;
+  color: var(--yellow);
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ---------- Photos column ---------- */
+
+.photos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 24px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: var(--photos-w);
+  height: 100vh;
+  background: var(--bg);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.photo-card {
+  position: relative;
+  display: block;
+  width: 273px;
+  flex: 1 1 0;
+  min-height: 0;
+  border-radius: 13px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.photo-card img.photo-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.3s ease-out;
+}
+
+.photo-card__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+@media (hover: hover) {
+  .photo-card:hover img.photo-card__img { filter: blur(2px); }
+  .photo-card:hover .photo-card__overlay { opacity: 1; }
+}
+
+.photo-card:focus-visible img.photo-card__img,
+.photo-card.is-linked-hover img.photo-card__img { filter: blur(2px); }
+
+.photo-card:focus-visible .photo-card__overlay,
+.photo-card.is-linked-hover .photo-card__overlay { opacity: 1; }
+
+.photo-card__overlay span {
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.photo-card__overlay img { width: 24px; height: 24px; }
+
+/* ---------- Matéria article page ---------- */
+
+.article-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1 1 728px;
+  max-width: 728px;
+  min-width: 0;
+  padding: 56px 0;
+}
+
+.article-hero {
+  width: 100%;
+  height: 360px;
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.article-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--blue);
+  width: fit-content;
+}
+
+.article-back:hover { text-decoration: underline; }
+
+/* ---------- Responsive: switch to mobile layout ---------- */
+
+@media (max-width: 1180px) {
+  .sidebar { display: none; }
+  .topbar { display: flex; }
+
+  .app { display: block; }
+
+  .content { display: flex; flex-direction: column; padding: 24px; margin-left: 0; min-width: 0; }
+  .content--with-photos { margin-right: 0; }
+
+  .body-col, .article-col {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 0 0 0;
+    gap: 12px;
+  }
+
+  /* No mobile do Figma, a tira de fotos vem antes do título/corpo */
+  .photos { order: -1; }
+  .article-back { order: -1; }
+
+  .hero-title {
+    font-size: 32px;
+    line-height: 36px;
+    text-align: center;
+    letter-spacing: 1.92px;
+  }
+
+  .hero-body { text-align: left; }
+
+  .photos {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 0 0 12px 0;
+    gap: 12px;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    height: auto;
+    background: transparent;
+    min-width: 0;
+  }
+
+  .photo-card { flex: 0 0 auto; width: 328px; height: 180px; }
+
+  .article-hero { height: 220px; }
+}
