@@ -1,7 +1,7 @@
 /* Veias do Recife — estilos compartilhados
    Tokens extraídos do Figma (arquivo "Paula", frames Desktop - 1 e Mobile) */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Roboto:ital,wght@0,400;0,500;0,700;0,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Newsreader:wght@400&family=Roboto:ital,wght@0,400;0,500;0,700;0,800&display=swap');
 
 :root {
   --blue: #435bd3;
@@ -269,18 +269,67 @@ body.menu-open .drawer { transform: translateX(0); }
   margin: 0;
 }
 
-/* Proporção fixa = a da imagem (852×704), para que as % dos pins
-   apontem sempre para o mesmo ponto do mapa em qualquer tamanho. */
 .body-col .hero-title { text-align: center; }
 
-.hero-text {
+/* ---------- Texto introdutório (frame "teste_textos" no Figma) ---------- */
+
+.intro {
+  width: 100%;
+  max-width: 600px;
+  align-self: center;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--black);
 }
 
-.hero-text .hero-body { text-indent: 1em; }
+.intro p { margin: 0; }
 
+.intro__lead {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.intro__lead-in { padding-top: 16px; }
+
+.intro__quote {
+  margin: 0;
+  padding: 16px 10px 37px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.intro__quote img { width: 26px; height: 21px; }
+
+.intro__quote p {
+  padding: 0 24px;
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.intro__lead-out,
+.intro__body p {
+  text-align: justify;
+  text-indent: 0.75em;
+}
+
+.intro__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* Proporção fixa = a da imagem (852×704), para que as % dos pins
+   apontem sempre para o mesmo ponto do mapa em qualquer tamanho. */
 .map {
   position: relative;
   border-radius: 13px;
@@ -511,6 +560,12 @@ body.menu-open .drawer { transform: translateX(0); }
   }
 
   .hero-body { text-align: left; }
+
+  .intro__lead-out,
+  .intro__body p { text-align: left; }
+
+  /* No mobile a citação pode quebrar em duas linhas */
+  .intro__quote p { line-height: 30px; }
 
   /* A tira vaza o padding de 24px do .content (margem negativa) para as
      fotos irem até a borda da tela; o padding interno mantém a 1ª e a
