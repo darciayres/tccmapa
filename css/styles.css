@@ -286,7 +286,7 @@ body.menu-open .drawer { transform: translateX(0); }
   color: var(--black);
 }
 
-.intro p { margin: 0; }
+.intro p { margin: 0; text-align: justify; }
 
 .intro__lead {
   display: flex;
@@ -300,7 +300,7 @@ body.menu-open .drawer { transform: translateX(0); }
 
 .intro__quote {
   margin: 0;
-  padding: 16px 10px 37px;
+  padding: 16px 10px 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -315,10 +315,7 @@ body.menu-open .drawer { transform: translateX(0); }
 }
 
 .intro__lead-out,
-.intro__body p {
-  text-align: justify;
-  text-indent: 0.75em;
-}
+.intro__body p { text-indent: 0.75em; }
 
 .intro__body {
   display: flex;
@@ -560,9 +557,6 @@ body.menu-open .drawer { transform: translateX(0); }
   }
 
   .hero-body { text-align: left; }
-
-  .intro__lead-out,
-  .intro__body p { text-align: left; }
 
   /* No mobile a citação pode quebrar em duas linhas */
   .intro__quote p { line-height: 30px; }
