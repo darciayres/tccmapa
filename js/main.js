@@ -10,16 +10,36 @@ const MATERIA_TITLES = {
   6: 'Matéria 6',
 };
 
+// Foto principal de cada matéria: usada nos cards da página inicial e na
+// miniatura do card dos pins. Quando uma matéria ganhar foto, troque só aqui.
+const MATERIA_PHOTOS = {
+  1: 'assets/images/materia-1.png',
+  2: 'assets/images/materia-2.png',
+  3: 'assets/images/materia-3.jpg',
+  4: 'assets/images/materia-4.png',
+  5: 'assets/images/materia-5.png',
+  6: 'assets/images/materia-6.png',
+};
+
+// Miniatura do card dos pins, quando tiver um enquadramento próprio (feito no
+// Figma, na instância "Pin Matéria N (card)"). Sem entrada aqui, usa a foto principal.
+const MATERIA_PIN_THUMBS = {
+  3: 'assets/images/materia-3-pin.jpg',
+};
+
 document.querySelectorAll('.nav__item[href^="materia-"]').forEach((item) => {
   const n = item.getAttribute('href').match(/materia-(\d+)\.html/)[1];
   if (MATERIA_TITLES[n]) item.textContent = MATERIA_TITLES[n];
 });
 
 document.querySelectorAll('.photo-card[data-materia]').forEach((card) => {
-  const title = MATERIA_TITLES[card.dataset.materia];
-  if (!title) return;
-  card.querySelector('.photo-card__title').textContent = title;
-  card.querySelector('.photo-card__img').alt = title;
+  const n = card.dataset.materia;
+  const img = card.querySelector('.photo-card__img');
+  if (MATERIA_PHOTOS[n]) img.src = MATERIA_PHOTOS[n];
+  if (MATERIA_TITLES[n]) {
+    card.querySelector('.photo-card__title').textContent = MATERIA_TITLES[n];
+    img.alt = MATERIA_TITLES[n];
+  }
 });
 
 // Um texto que quebra linha ocupa toda a largura disponível; aqui a largura do
@@ -175,7 +195,7 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     const label = document.createElement('span');
     label.className = 'pin__label';
     const thumb = document.createElement('img');
-    thumb.src = 'assets/images/materia-' + pin.dataset.materia + '.png';
+    thumb.src = MATERIA_PIN_THUMBS[pin.dataset.materia] || MATERIA_PHOTOS[pin.dataset.materia];
     thumb.alt = '';
     const text = document.createElement('span');
     text.textContent = pin.title;

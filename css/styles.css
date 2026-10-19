@@ -434,8 +434,7 @@ body.menu-open .drawer { transform: translateX(0); }
   width: 100%;
   height: 36px;
   object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: -4px;
+  border-radius: 4px 4px 0 0;
 }
 
 .pin__label span {
@@ -455,8 +454,7 @@ body.menu-open .drawer { transform: translateX(0); }
 
 .map--article .pin .pin__label img {
   height: 54px;
-  border-radius: 6px;
-  margin-bottom: -6px;
+  border-radius: 6px 6px 0 0;
 }
 
 .map--article .pin__label span {
@@ -613,6 +611,13 @@ body.menu-open .drawer { transform: translateX(0); }
 .article-text p {
   margin: 0;
   text-align: justify;
+}
+
+.article-photo {
+  width: 100%;
+  aspect-ratio: 728 / 360;
+  object-fit: cover;
+  border-radius: 13px;
 }
 
 .article-text .quote {
