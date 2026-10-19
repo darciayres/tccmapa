@@ -1,3 +1,42 @@
+// Títulos das matérias: fonte única para a barra lateral, o menu mobile,
+// o texto do hover das fotos e os cards/tooltips dos pins.
+// Quando uma matéria ganhar título, troque só aqui.
+const MATERIA_TITLES = {
+  1: 'Matéria 1',
+  2: 'Matéria 2',
+  3: 'O rio também é turismo.',
+  4: 'Matéria 4',
+  5: 'Matéria 5',
+  6: 'Matéria 6',
+};
+
+document.querySelectorAll('.nav__item[href^="materia-"]').forEach((item) => {
+  const n = item.getAttribute('href').match(/materia-(\d+)\.html/)[1];
+  if (MATERIA_TITLES[n]) item.textContent = MATERIA_TITLES[n];
+});
+
+document.querySelectorAll('.photo-card[data-materia]').forEach((card) => {
+  const title = MATERIA_TITLES[card.dataset.materia];
+  if (!title) return;
+  card.querySelector('.photo-card__title').textContent = title;
+  card.querySelector('.photo-card__img').alt = title;
+});
+
+// Um texto que quebra linha ocupa toda a largura disponível; aqui a largura do
+// título vira a da sua linha mais longa, para o ícone ficar encostado no texto.
+function fitPhotoTitles() {
+  document.querySelectorAll('.photo-card__title').forEach((title) => {
+    title.style.width = '';
+    const range = document.createRange();
+    range.selectNodeContents(title);
+    const widest = Math.max(0, ...Array.from(range.getClientRects(), (r) => r.width));
+    if (widest) title.style.width = Math.ceil(widest) + 1 + 'px';
+  });
+}
+fitPhotoTitles();
+if (document.fonts) document.fonts.ready.then(fitPhotoTitles);
+window.addEventListener('resize', fitPhotoTitles);
+
 // Veias do Recife — menu mobile (drawer)
 // Espelha a interação já definida no Figma: tocar no ícone hambúrguer abre
 // o menu (equivalente à sidebar do desktop); tocar no X, clicar fora ou
@@ -28,6 +67,56 @@
     if (e.key === 'Escape') closeMenu();
   });
 })();
+
+// Clicar no item da página atual não recarrega a página; no menu mobile, só fecha o menu
+document.querySelectorAll('.nav__item.is-active').forEach((item) => {
+  item.setAttribute('aria-current', 'page');
+  item.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.body.classList.remove('menu-open');
+  });
+});
+
+// Componente do mapa: monta a imagem e os pins em todo <div class="map" data-map>.
+// Para mudar a posição de um pin, edite left/top abaixo (em % do mapa, marcando a ponta do pin).
+// Numa página de matéria, data-current="N" destaca o pin da matéria atual.
+const MAP_PINS = [
+  { materia: 1, left: 60.18, top: 38.76 },
+  { materia: 2, left: 54.50, top: 25.08 },
+  { materia: 3, left: 52.59, top: 37.46 },
+  { materia: 4, left: 35.84, top: 67.52 },
+  { materia: 5, left: 26.91, top: 81.57 },
+  { materia: 6, left: 16.91, top: 81.57 },
+];
+
+document.querySelectorAll('.map[data-map]').forEach((map) => {
+  const current = map.dataset.current;
+  if (current) map.classList.add('map--article');
+  const base = document.createElement('img');
+  base.src = 'assets/images/map.png';
+  base.alt = 'Mapa do Recife';
+  map.append(base);
+
+  MAP_PINS.forEach(({ materia, left, top }) => {
+    const pin = document.createElement('a');
+    pin.className = 'pin';
+    pin.href = 'materia-' + materia + '.html';
+    pin.title = MATERIA_TITLES[materia] || 'Matéria ' + materia;
+    pin.dataset.materia = materia;
+    pin.style.left = left + '%';
+    pin.style.top = top + '%';
+    if (String(materia) === current) {
+      pin.classList.add('is-current');
+      pin.setAttribute('aria-current', 'page');
+      pin.innerHTML = '<img class="pin__current" src="assets/icons/pin-current.svg" alt="">';
+    } else {
+      pin.innerHTML =
+        '<img class="pin__default" src="assets/icons/pin-default.svg" alt="">' +
+        '<img class="pin__hover" src="assets/icons/pin-hover.svg" alt="">';
+    }
+    map.append(pin);
+  });
+});
 
 // Mapa interativo
 // Mouse: hover num pin destaca a foto da matéria correspondente, e vice-versa.
@@ -93,6 +182,10 @@
     label.append(thumb, text);
     pin.append(label);
 
+    if (pin.closest('.map--article')) {
+      pin.addEventListener('mouseenter', () => { if (!isTouch()) keepLabelOnScreen(label); });
+    }
+
     const photo = photoFor(pin);
     if (photo) {
       const on = () => { if (!isTouch()) photo.classList.add('is-linked-hover'); };
@@ -104,6 +197,10 @@
     }
 
     pin.addEventListener('click', (e) => {
+      if (pin.classList.contains('is-current')) {
+        e.preventDefault();
+        return;
+      }
       if (!isTouch() || pin === selected) return;
       e.preventDefault();
       clearActivePhoto();

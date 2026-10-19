@@ -1,15 +1,15 @@
 /* Veias do Recife — estilos compartilhados
    Tokens extraídos do Figma (arquivo "Paula", frames Desktop - 1 e Mobile) */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Newsreader:wght@500&family=Roboto:ital,wght@0,400;0,500;0,700;0,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Newsreader:ital,wght@0,400;0,500;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;0,800&display=swap');
 
 :root {
   --blue: #435bd3;
   --blue-selected: #2f47c1;
   --yellow: #facc15;
-  --bg: #fafaf9;
+  --bg: #f5f5f5;
   --accent: #5b77ff;
-  --black: #000000;
+  --black: #3c3c3c;
   --sidebar-w: 270px;
   --photos-w: 321px;
   --content-gap: 48px;
@@ -48,15 +48,15 @@ img { display: block; max-width: 100%; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 80px;
-  padding: 56px 24px;
+  gap: 40px;
+  padding: 32px 24px;
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   overflow: hidden;
   z-index: 10;
-  box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 0 48.6px 0 rgba(0, 0, 0, 0.4);
 }
 
 .brand {
@@ -70,15 +70,20 @@ img { display: block; max-width: 100%; }
 .brand__avatar {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
   flex-shrink: 0;
 }
 
 .brand__avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+}
+
+/* Na barra lateral a logo ocupa 90×100 com 10px de respiro, como a instância no Figma */
+.sidebar .brand__avatar {
+  width: 90px;
+  height: 100px;
+  padding: 10px;
 }
 
 .brand__name {
@@ -102,14 +107,13 @@ img { display: block; max-width: 100%; }
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 4px 28px 4px 16px;
+  padding: 7px 28px 7px 16px;
   border-radius: 8px;
   background: transparent;
   color: #ffffff;
-  font-weight: 500;
+  font-weight: 400;
   font-size: 24px;
-  line-height: 36px;
-  white-space: nowrap;
+  line-height: 30px;
   transition: background-color 0.3s ease-out;
 }
 
@@ -117,9 +121,10 @@ img { display: block; max-width: 100%; }
   background: var(--blue-selected);
 }
 
+/* Selecionado: só texto amarelo em Medium; o fundo aparece apenas no hover */
 .nav__item.is-active {
-  background: var(--blue-selected);
   color: var(--yellow);
+  font-weight: 500;
 }
 
 /* ---------- Mobile top bar ---------- */
@@ -248,7 +253,7 @@ body.menu-open .drawer { transform: translateX(0); }
   flex: 1 1 auto;
   max-width: 100%;
   min-width: 0;
-  padding: 24px 0;
+  padding: 32px 0;
 }
 
 .hero-title {
@@ -275,6 +280,8 @@ body.menu-open .drawer { transform: translateX(0); }
   max-width: 600px;
   align-self: center;
   font-family: 'Newsreader', Georgia, serif;
+  font-size: 80px;
+  line-height: 102px;
   text-align: left;
 }
 
@@ -299,9 +306,11 @@ body.menu-open .drawer { transform: translateX(0); }
   display: flex;
   flex-direction: column;
   gap: 12px;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 24px;
 }
+
+.intro__lead-in { font-weight: 400; }
 
 .intro__quote {
   margin: 0;
@@ -315,8 +324,9 @@ body.menu-open .drawer { transform: translateX(0); }
 
 .intro__quote p {
   padding: 0 24px;
-  font-size: 24px;
-  line-height: 24px;
+  font-size: 40px;
+  line-height: 39px;
+  font-weight: 400;
 }
 
 .intro__lead-out,
@@ -324,10 +334,13 @@ body.menu-open .drawer { transform: translateX(0); }
 .intro__body {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   padding-top: 16px;
-  font-size: 16px;
+  /* Estilo "texto" do Figma */
+  font-weight: 400;
+  font-size: 20px;
   line-height: 24px;
+  letter-spacing: 0.1px;
 }
 
 /* Proporção fixa = a da imagem (852×704), para que as % dos pins
@@ -377,6 +390,20 @@ body.menu-open .drawer { transform: translateX(0); }
 .pin.is-linked-hover img.pin__default { opacity: 0; }
 .pin.is-linked-hover img.pin__hover { opacity: 1; }
 
+/* Pin da matéria aberta (mapa no fim da página de matéria): mesmo tamanho dos
+   outros, só com a bola amarela (ícone pin-current.svg, definido no main.js) */
+.pin.is-current { z-index: 2; cursor: default; }
+
+/* Mapa das matérias, com mouse: o hover mostra o card, como o 1º toque no touch */
+@media (hover: hover) {
+  .map--article .pin:hover { z-index: 3; }
+  .map--article .pin:hover .pin__label {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(calc(-50% + var(--label-shift, 0px)));
+  }
+}
+
 /* Touch: 1º toque seleciona o pin (estado "hoover" do Pin_Mobile no Figma) */
 .pin.is-selected { z-index: 3; }
 .pin.is-selected img.pin__default { opacity: 0; }
@@ -420,7 +447,21 @@ body.menu-open .drawer { transform: translateX(0); }
   font-weight: 500;
   font-size: 12px;
   text-align: center;
-  white-space: nowrap;
+}
+
+/* Card maior (1,5×) no mapa das páginas de matéria */
+.map--article .pin__label { width: 192px; }
+
+.map--article .pin .pin__label img {
+  height: 54px;
+  border-radius: 6px;
+  margin-bottom: -6px;
+}
+
+.map--article .pin__label span {
+  padding: 6px 12px;
+  border-radius: 0 0 6px 6px;
+  font-size: 16px;
 }
 
 /* ---------- Photos column ---------- */
@@ -431,7 +472,7 @@ body.menu-open .drawer { transform: translateX(0); }
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-  padding: 24px;
+  padding: 32px 24px;
   position: fixed;
   top: 0;
   right: 0;
@@ -467,6 +508,7 @@ body.menu-open .drawer { transform: translateX(0); }
   align-items: center;
   justify-content: center;
   gap: 4px;
+  padding: 0 16px;
   background: rgba(0, 0, 0, 0.3);
   opacity: 0;
   transition: opacity 0.3s ease-out;
@@ -483,14 +525,31 @@ body.menu-open .drawer { transform: translateX(0); }
 .photo-card:focus-visible .photo-card__overlay,
 .photo-card.is-linked-hover .photo-card__overlay { opacity: 1; }
 
-.photo-card__overlay span {
+/* Ícone à esquerda, centralizado na altura do bloco de texto. A largura do
+   título é ajustada à linha mais longa pelo main.js, para o ícone ficar
+   encostado mesmo quando o título quebra linha. */
+.photo-card__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   font-weight: 800;
   font-size: 20px;
-  color: var(--accent);
+  line-height: 24px;
+  color: var(--yellow);
   letter-spacing: 0.5px;
 }
 
-.photo-card__overlay img { width: 24px; height: 24px; }
+.photo-card__label img {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.photo-card__title {
+  display: block;
+  text-align: center;
+}
 
 /* ---------- Matéria article page ---------- */
 
@@ -501,7 +560,7 @@ body.menu-open .drawer { transform: translateX(0); }
   flex: 1 1 728px;
   max-width: 728px;
   min-width: 0;
-  padding: 56px 0;
+  padding: 32px 0;
 }
 
 .article-hero {
@@ -528,6 +587,37 @@ body.menu-open .drawer { transform: translateX(0); }
 }
 
 .article-back:hover { text-decoration: underline; }
+
+/* Estilos de texto do Figma: "Título", "texto" e "citação texto" */
+.article-title {
+  margin: 0;
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  font-size: 57px;
+  line-height: 64px;
+  letter-spacing: -1px;
+}
+
+.article-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0.1px;
+}
+
+.article-text p {
+  margin: 0;
+  text-align: justify;
+}
+
+.article-text .quote {
+  font-style: italic;
+  text-indent: 1em;
+}
 
 /* ---------- Responsive: switch to mobile layout ---------- */
 
@@ -564,7 +654,9 @@ body.menu-open .drawer { transform: translateX(0); }
   .hero-body { text-align: left; }
 
   /* No mobile a citação pode quebrar em duas linhas */
-  .intro__quote p { line-height: 30px; }
+  /* No mobile o título e a citação do desktop (80px e 40px) não cabem na largura */
+  .body-col .hero-title { font-size: 40px; line-height: 48px; }
+  .intro__quote p { font-size: 28px; line-height: 32px; }
 
   /* A tira vaza o padding de 24px do .content (margem negativa) para as
      fotos irem até a borda da tela; o padding interno mantém a 1ª e a
@@ -594,4 +686,10 @@ body.menu-open .drawer { transform: translateX(0); }
   }
 
   .article-hero { height: 220px; }
+
+  .article-title {
+    font-size: 32px;
+    line-height: 36px;
+    letter-spacing: -0.5px;
+  }
 }
