@@ -10,12 +10,14 @@ const MATERIA_TITLES = {
   6: 'Matéria 6',
 };
 
-// Foto principal de cada matéria: usada nos cards da página inicial e na
-// miniatura do card dos pins. Quando uma matéria ganhar foto, troque só aqui.
+// Foto do card de cada matéria na página inicial (enquadramento feito no Figma,
+// na instância "Card Matéria N (página inicial)"). Também é a miniatura do card
+// dos pins quando a matéria não tem uma própria. Quando uma matéria ganhar foto,
+// troque só aqui.
 const MATERIA_PHOTOS = {
   1: 'assets/images/materia-1.png',
   2: 'assets/images/materia-2.png',
-  3: 'assets/images/materia-3.jpg',
+  3: 'assets/images/materia-3-card.jpg',
   4: 'assets/images/materia-4.png',
   5: 'assets/images/materia-5.png',
   6: 'assets/images/materia-6.png',
