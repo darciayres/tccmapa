@@ -112,7 +112,7 @@ img { display: block; max-width: 100%; }
   border-radius: 8px;
   background: transparent;
   color: #ffffff;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 24px;
   line-height: 30px;
   transition: background-color 0.3s ease-out;
@@ -122,10 +122,10 @@ img { display: block; max-width: 100%; }
   background: var(--blue-selected);
 }
 
-/* Selecionado: só texto amarelo em Medium; o fundo aparece apenas no hover */
+/* Selecionado: só texto amarelo em Bold; o fundo aparece apenas no hover */
 .nav__item.is-active {
   color: var(--yellow);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 /* ---------- Mobile top bar ---------- */
