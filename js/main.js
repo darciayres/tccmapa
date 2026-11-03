@@ -174,7 +174,8 @@ function buildInteractiveMap(container, current) {
     fitBoundsOptions: { padding: { top: 80, bottom: 40, left: 40, right: 40 } },
     maxBounds: MAP_BOUNDS,
     scrollZoom: false,
-    cooperativeGestures: isTouch,
+    // Touch: 1 dedo arrasta o mapa; fora dele a página rola normalmente
+    cooperativeGestures: false,
     dragRotate: false,
     pitchWithRotate: false,
     // Crédito obrigatório: no touch fica recolhido no "i"; com mouse, sempre visível e sem botão
