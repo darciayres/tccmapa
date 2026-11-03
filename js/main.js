@@ -99,10 +99,92 @@ document.querySelectorAll('.nav__item.is-active').forEach((item) => {
   });
 });
 
-// Componente do mapa: monta a imagem e os pins em todo <div class="map" data-map="...">.
-// data-map escolhe o mapa abaixo (vazio = "padrao"). Para mudar a posição de um pin,
-// edite left/top (em % do mapa, marcando a ponta do pin).
+// Componente do mapa: monta o mapa e os pins em todo <div class="map" data-map="...">.
 // Numa página de matéria, data-current="N" destaca o pin da matéria atual.
+//
+// Mapa interativo (MapLibre + OpenFreeMap). Cada pin é uma coordenada real:
+// para mudar a posição, troque lat/lng (no Google Maps, clique com o botão
+// direito no ponto e copie os números). POSIÇÕES PROVISÓRIAS.
+const MAP_POINTS = [
+  { materia: 1, lat: -8.06305, lng: -34.87108 }, // Marco Zero
+  { materia: 2, lat: -8.06175, lng: -34.87185 }, // Rua do Bom Jesus
+  { materia: 3, lat: -8.06420, lng: -34.87040 }, // cais do Marco Zero (Capibaribe Tour)
+  { materia: 4, lat: -8.05330, lng: -34.87000 }, // Forte do Brum
+  { materia: 5, lat: -8.06520, lng: -34.87205 }, // Cais do Sertão
+  { materia: 6, lat: -8.06045, lng: -34.87265 }, // Torre Malakoff
+];
+
+// Área em que o mapa pode ser arrastado (Bairro do Recife e arredores)
+const MAP_BOUNDS = [[-34.8900, -8.0760], [-34.8550, -8.0420]];
+
+// Cores da paleta aplicadas por cima do estilo "positron" do OpenFreeMap.
+// Para um estilo totalmente próprio, troque MAP_STYLE pelo arquivo exportado do Maputnik.
+const MAP_STYLE = 'https://tiles.openfreemap.org/styles/positron';
+function applyPalette(map) {
+  const css = getComputedStyle(document.documentElement);
+  const c = (name) => css.getPropertyValue(name).trim();
+  const set = (id, prop, value) => { if (map.getLayer(id)) map.setPaintProperty(id, prop, value); };
+  set('background', 'background-color', c('--fundo'));
+  set('water', 'fill-color', c('--azulclaro'));
+  set('water', 'fill-opacity', 0.45);
+  set('waterway', 'line-color', c('--azulclaro'));
+  for (const layer of map.getStyle().layers) {
+    if (layer.type === 'symbol' && !/^water/.test(layer.id)) set(layer.id, 'text-color', c('--preto'));
+    if (layer.type === 'symbol' && /^water/.test(layer.id)) set(layer.id, 'text-color', c('--azulescuro'));
+  }
+}
+
+function buildPin(materia, current) {
+  const pin = document.createElement('a');
+  pin.className = 'pin';
+  pin.href = 'materia-' + materia + '.html';
+  pin.title = MATERIA_TITLES[materia] || 'Matéria ' + materia;
+  pin.dataset.materia = materia;
+  if (String(materia) === current) {
+    pin.classList.add('is-current');
+    pin.setAttribute('aria-current', 'page');
+    pin.innerHTML = '<img class="pin__current" src="assets/icons/pin-current.svg" alt="">';
+  } else {
+    pin.innerHTML =
+      '<img class="pin__default" src="assets/icons/pin-default.svg" alt="">' +
+      '<img class="pin__hover" src="assets/icons/pin-hover.svg" alt="">';
+  }
+  return pin;
+}
+
+function buildInteractiveMap(container, current) {
+  container.classList.add('map--live');
+  const isTouch = window.matchMedia('(hover: none)').matches;
+  const map = new maplibregl.Map({
+    container,
+    style: MAP_STYLE,
+    bounds: MAP_POINTS.reduce((b, p) => b.extend([p.lng, p.lat]), new maplibregl.LngLatBounds()),
+    fitBoundsOptions: { padding: { top: 80, bottom: 40, left: 40, right: 40 } },
+    maxBounds: MAP_BOUNDS,
+    scrollZoom: false,
+    cooperativeGestures: isTouch,
+    dragRotate: false,
+    pitchWithRotate: false,
+    attributionControl: { compact: true },
+  });
+  map.touchZoomRotate.disableRotation();
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+  map.on('style.load', () => applyPalette(map));
+  // O crédito do mapa (obrigatório) começa recolhido no ícone "i"
+  map.on('load', () => {
+    const attrib = container.querySelector('.maplibregl-ctrl-attrib');
+    if (attrib) attrib.classList.remove('maplibregl-compact-show');
+  });
+  window.addEventListener('resize', () => map.resize());
+
+  MAP_POINTS.forEach(({ materia, lat, lng }) => {
+    new maplibregl.Marker({ element: buildPin(materia, current), anchor: 'bottom' })
+      .setLngLat([lng, lat])
+      .addTo(map);
+  });
+}
+
+// Reserva: sem internet ou sem a biblioteca, volta para a imagem estática
 const MAPS = {
   // Mapa horizontal: página inicial no mobile e fim das matérias
   padrao: {
@@ -133,6 +215,10 @@ const MAPS = {
 document.querySelectorAll('.map[data-map]').forEach((map) => {
   const current = map.dataset.current;
   if (current) map.classList.add('map--article');
+  if (window.maplibregl) {
+    buildInteractiveMap(map, current);
+    return;
+  }
   const config = MAPS[map.dataset.map] || MAPS.padrao;
   const base = document.createElement('img');
   base.src = config.image;
@@ -140,22 +226,9 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
   map.append(base);
 
   config.pins.forEach(({ materia, left, top }) => {
-    const pin = document.createElement('a');
-    pin.className = 'pin';
-    pin.href = 'materia-' + materia + '.html';
-    pin.title = MATERIA_TITLES[materia] || 'Matéria ' + materia;
-    pin.dataset.materia = materia;
+    const pin = buildPin(materia, current);
     pin.style.left = left + '%';
     pin.style.top = top + '%';
-    if (String(materia) === current) {
-      pin.classList.add('is-current');
-      pin.setAttribute('aria-current', 'page');
-      pin.innerHTML = '<img class="pin__current" src="assets/icons/pin-current.svg" alt="">';
-    } else {
-      pin.innerHTML =
-        '<img class="pin__default" src="assets/icons/pin-default.svg" alt="">' +
-        '<img class="pin__hover" src="assets/icons/pin-hover.svg" alt="">';
-    }
     map.append(pin);
   });
 });
