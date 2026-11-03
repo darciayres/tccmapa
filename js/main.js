@@ -114,8 +114,20 @@ const MAP_POINTS = [
   { materia: 6, lat: -8.06045, lng: -34.87265 }, // Torre Malakoff
 ];
 
-// Área em que o mapa pode ser arrastado (Bairro do Recife e arredores)
-const MAP_BOUNDS = [[-34.8900, -8.0760], [-34.8550, -8.0420]];
+// Até onde o mapa pode ser arrastado: MAP_MARGIN_KM além dos pins mais distantes,
+// em cada direção (recalcula sozinho quando os pins mudam)
+const MAP_MARGIN_KM = 1.2;
+const MAP_BOUNDS = (() => {
+  const lats = MAP_POINTS.map((p) => p.lat);
+  const lngs = MAP_POINTS.map((p) => p.lng);
+  const midLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+  const dLat = MAP_MARGIN_KM / 110.574;
+  const dLng = MAP_MARGIN_KM / (111.32 * Math.cos((midLat * Math.PI) / 180));
+  return [
+    [Math.min(...lngs) - dLng, Math.min(...lats) - dLat], // oeste, sul
+    [Math.max(...lngs) + dLng, Math.max(...lats) + dLat], // leste, norte
+  ];
+})();
 
 // Cores da paleta aplicadas por cima do estilo "positron" do OpenFreeMap.
 // Para um estilo totalmente próprio, troque MAP_STYLE pelo arquivo exportado do Maputnik.
@@ -165,7 +177,8 @@ function buildInteractiveMap(container, current) {
     cooperativeGestures: isTouch,
     dragRotate: false,
     pitchWithRotate: false,
-    attributionControl: { compact: true },
+    // Crédito obrigatório: no touch fica recolhido no "i"; com mouse, sempre visível e sem botão
+    attributionControl: { compact: isTouch },
   });
   map.touchZoomRotate.disableRotation();
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
