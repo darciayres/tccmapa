@@ -4,12 +4,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Newsreader:ital,wght@0,400;0,500;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;0,800&display=swap');
 
 :root {
-  --blue: #435bd3;
-  --blue-selected: #2f47c1;
-  --yellow: #facc15;
-  --bg: #f5f5f5;
-  --accent: #5b77ff;
-  --black: #3c3c3c;
+  /* Cores: mesmos nomes das variáveis do Figma */
+  --azulclaro: #4384d3;
+  --azulescuro: #2869b9;
+  --amarelo: #fdc805;
+  --fundo: #f5f5f5;
+  --preto: #3c3c3c;
+
   --sidebar-w: 270px;
   --photos-w: 321px;
   --content-gap: 48px;
@@ -20,8 +21,8 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--black);
+  background: var(--fundo);
+  color: var(--preto);
   font-family: 'Roboto', system-ui, sans-serif;
   /* clip (e não hidden): hidden vira área de rolagem e anula o sticky da barra superior */
   overflow-x: clip;
@@ -43,7 +44,7 @@ img { display: block; max-width: 100%; }
    é cortada por scroll horizontal do conteúdo ao lado. */
 
 .sidebar {
-  background: var(--blue);
+  background: var(--azulclaro);
   width: var(--sidebar-w);
   flex-shrink: 0;
   display: flex;
@@ -91,7 +92,7 @@ img { display: block; max-width: 100%; }
   font-weight: 700;
   font-size: 32px;
   line-height: 1.1;
-  color: var(--yellow);
+  color: var(--amarelo);
   text-align: center;
   white-space: normal;
   max-width: 100%;
@@ -111,7 +112,7 @@ img { display: block; max-width: 100%; }
   padding: 7px 28px 7px 16px;
   border-radius: 8px;
   background: transparent;
-  color: #ffffff;
+  color: var(--fundo);
   font-weight: 500;
   font-size: 24px;
   line-height: 30px;
@@ -119,13 +120,30 @@ img { display: block; max-width: 100%; }
 }
 
 .nav__item:hover {
-  background: var(--blue-selected);
+  background: var(--azulescuro);
 }
 
 /* Selecionado: só texto amarelo em Bold; o fundo aparece apenas no hover */
 .nav__item.is-active {
-  color: var(--yellow);
+  color: var(--amarelo);
   font-weight: 700;
+}
+
+/* Marca e itens por cima do grafismo */
+.sidebar > .brand,
+.sidebar > .nav { position: relative; z-index: 1; }
+
+/* Roda decorativa no pé da barra: no Figma (1024px de altura) ela começa em
+   y = 663; ancorada embaixo, fica na mesma posição em qualquer altura de tela */
+.sidebar__grafismo {
+  position: absolute;
+  left: 24px;
+  bottom: -149px;
+  width: 510px;
+  height: 510px;
+  max-width: none;
+  transform: rotate(-14.6deg);
+  pointer-events: none;
 }
 
 /* ---------- Mobile top bar ---------- */
@@ -134,7 +152,7 @@ img { display: block; max-width: 100%; }
   display: none;
   align-items: center;
   justify-content: space-between;
-  background: var(--blue);
+  background: var(--azulclaro);
   padding: 12px 24px;
   padding-top: max(12px, env(safe-area-inset-top));
   /* Mesma sombra da barra lateral do desktop, projetada para baixo */
@@ -196,7 +214,7 @@ img { display: block; max-width: 100%; }
   height: 100%;
   width: 270px;
   max-width: 82vw;
-  background: var(--blue);
+  background: var(--azulclaro);
   z-index: 31;
   display: flex;
   flex-direction: column;
@@ -220,7 +238,7 @@ body.menu-open .drawer { transform: translateX(0); }
 .drawer__close {
   background: none;
   border: none;
-  color: var(--yellow);
+  color: var(--amarelo);
   cursor: pointer;
   padding: 0;
 }
@@ -241,11 +259,11 @@ body.menu-open .drawer { transform: translateX(0); }
   min-width: 0;
 }
 
-/* Reserva espaço para a coluna de fotos fixa (só existe na home) */
-/* padding-left 48px = mesmo espaço do lado das fotos (24px daqui + 24px do padding de .photos) */
-.content--with-photos {
-  margin-right: var(--photos-w);
-  padding-left: 48px;
+/* Página inicial: texto (728) + 48px + coluna do mapa (321) formam um bloco só,
+   como no grid do Figma, centralizado na área à direita da barra lateral.
+   Em telas estreitas a coluna do texto encolhe; a do mapa não. */
+.content--with-photos .body-col {
+  flex: 0 1 728px;
 }
 
 .body-col {
@@ -299,7 +317,7 @@ body.menu-open .drawer { transform: translateX(0); }
   font-family: 'Newsreader', Georgia, serif;
   font-weight: 500;
   letter-spacing: 0.5px;
-  color: var(--black);
+  color: var(--preto);
 }
 
 .intro p { margin: 0; text-align: justify; }
@@ -398,8 +416,10 @@ body.menu-open .drawer { transform: translateX(0); }
 
 /* Mapa das matérias, com mouse: o hover mostra o card, como o 1º toque no touch */
 @media (hover: hover) {
-  .map--article .pin:hover { z-index: 3; }
-  .map--article .pin:hover .pin__label {
+  .map--article .pin:hover,
+  .map--coluna .pin:hover { z-index: 3; }
+  .map--article .pin:hover .pin__label,
+  .map--coluna .pin:hover .pin__label {
     opacity: 1;
     visibility: visible;
     transform: translateX(calc(-50% + var(--label-shift, 0px)));
@@ -441,9 +461,9 @@ body.menu-open .drawer { transform: translateX(0); }
 .pin__label span {
   position: relative;
   padding: 4px 8px;
-  background: var(--accent);
+  background: var(--azulclaro);
   border-radius: 0 0 4px 4px;
-  color: var(--yellow);
+  color: var(--amarelo);
   font-family: 'Inter', 'Roboto', sans-serif;
   font-weight: 500;
   font-size: 12px;
@@ -464,10 +484,41 @@ body.menu-open .drawer { transform: translateX(0); }
   font-size: 16px;
 }
 
-/* ---------- Photos column ---------- */
+/* ---------- Coluna do mapa (página inicial, desktop) ---------- */
+
+/* Presa ao bloco do conteúdo (sticky), e não à borda da tela: fica parada
+   enquanto o texto rola, sempre a 48px dele */
+.map-column {
+  position: sticky;
+  top: 0;
+  flex: 0 0 var(--photos-w);
+  height: 100vh;
+  padding: 32px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fundo);
+  z-index: 10;
+}
+
+/* Proporção fixa do recorte do Figma (273×912): o mapa ocupa a altura da coluna
+   e, em telas mais baixas, encolhe sem mudar o enquadramento dos pins */
+.map.map--coluna {
+  /* largura = a menor entre a da coluna e a que cabe na altura (100vh - 64px de padding) */
+  width: min(100%, calc((100vh - 64px) * 273 / 912));
+  height: auto;
+  aspect-ratio: 273 / 912;
+}
+
+.map--coluna .pin { width: clamp(18px, 11.36%, 31px); }
+
+/* No desktop o mapa vai para a coluna; o mapa abaixo do texto fica só no mobile */
+.body-col > .map { display: none; }
+
+/* ---------- Photos column (só mobile: tira de fotos) ---------- */
 
 .photos {
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   gap: 8px;
@@ -478,7 +529,7 @@ body.menu-open .drawer { transform: translateX(0); }
   right: 0;
   width: var(--photos-w);
   height: 100vh;
-  background: var(--bg);
+  background: var(--fundo);
   overflow: hidden;
   z-index: 10;
 }
@@ -536,7 +587,7 @@ body.menu-open .drawer { transform: translateX(0); }
   font-weight: 800;
   font-size: 20px;
   line-height: 24px;
-  color: var(--yellow);
+  color: var(--amarelo);
   letter-spacing: 0.5px;
 }
 
@@ -582,7 +633,7 @@ body.menu-open .drawer { transform: translateX(0); }
   gap: 6px;
   font-weight: 500;
   font-size: 16px;
-  color: var(--blue);
+  color: var(--azulclaro);
   width: fit-content;
 }
 
@@ -668,7 +719,12 @@ body.menu-open .drawer { transform: translateX(0); }
   /* A tira vaza o padding de 24px do .content (margem negativa) para as
      fotos irem até a borda da tela; o padding interno mantém a 1ª e a
      última foto alinhadas a 24px, como o texto. */
+  /* No mobile: tira de fotos e mapa abaixo do texto; sem a coluna do mapa */
+  .map-column { display: none; }
+  .body-col > .map { display: block; }
+
   .photos {
+    display: flex;
     position: static;
     flex-direction: row;
     overflow-x: auto;

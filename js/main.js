@@ -99,27 +99,47 @@ document.querySelectorAll('.nav__item.is-active').forEach((item) => {
   });
 });
 
-// Componente do mapa: monta a imagem e os pins em todo <div class="map" data-map>.
-// Para mudar a posição de um pin, edite left/top abaixo (em % do mapa, marcando a ponta do pin).
+// Componente do mapa: monta a imagem e os pins em todo <div class="map" data-map="...">.
+// data-map escolhe o mapa abaixo (vazio = "padrao"). Para mudar a posição de um pin,
+// edite left/top (em % do mapa, marcando a ponta do pin).
 // Numa página de matéria, data-current="N" destaca o pin da matéria atual.
-const MAP_PINS = [
-  { materia: 1, left: 60.18, top: 38.76 },
-  { materia: 2, left: 54.50, top: 25.08 },
-  { materia: 3, left: 52.59, top: 37.46 },
-  { materia: 4, left: 35.84, top: 67.52 },
-  { materia: 5, left: 26.91, top: 81.57 },
-  { materia: 6, left: 16.91, top: 81.57 },
-];
+const MAPS = {
+  // Mapa horizontal: página inicial no mobile e fim das matérias
+  padrao: {
+    image: 'assets/images/map.png',
+    pins: [
+      { materia: 1, left: 60.18, top: 38.76 },
+      { materia: 2, left: 54.50, top: 25.08 },
+      { materia: 3, left: 52.59, top: 37.46 },
+      { materia: 4, left: 35.84, top: 67.52 },
+      { materia: 5, left: 26.91, top: 81.57 },
+      { materia: 6, left: 16.91, top: 81.57 },
+    ],
+  },
+  // Mapa vertical da coluna da direita (página inicial no desktop). Posições provisórias.
+  coluna: {
+    image: 'assets/images/mapa-coluna.png',
+    pins: [
+      { materia: 1, left: 14.65, top: 83.11 },
+      { materia: 2, left: 55.68, top: 73.90 },
+      { materia: 3, left: 87.91, top: 48.79 },
+      { materia: 4, left: 19.41, top: 52.41 },
+      { materia: 5, left: 66.30, top: 32.13 },
+      { materia: 6, left: 67.03, top: 57.24 },
+    ],
+  },
+};
 
 document.querySelectorAll('.map[data-map]').forEach((map) => {
   const current = map.dataset.current;
   if (current) map.classList.add('map--article');
+  const config = MAPS[map.dataset.map] || MAPS.padrao;
   const base = document.createElement('img');
-  base.src = 'assets/images/map.png';
+  base.src = config.image;
   base.alt = 'Mapa do Recife';
   map.append(base);
 
-  MAP_PINS.forEach(({ materia, left, top }) => {
+  config.pins.forEach(({ materia, left, top }) => {
     const pin = document.createElement('a');
     pin.className = 'pin';
     pin.href = 'materia-' + materia + '.html';
@@ -204,7 +224,7 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     label.append(thumb, text);
     pin.append(label);
 
-    if (pin.closest('.map--article')) {
+    if (pin.closest('.map--article, .map--coluna')) {
       pin.addEventListener('mouseenter', () => { if (!isTouch()) keepLabelOnScreen(label); });
     }
 
