@@ -380,3 +380,64 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     }
   });
 })();
+
+/* ---------- Trecho com foto (componente "hover_texto") ----------
+   Mouse: a foto aparece no hover. Touch: um toque abre, outro toque
+   (no trecho ou fora dele) fecha. Teclado: Tab foca e mostra a foto. */
+(function () {
+  const trechos = document.querySelectorAll('.hover-foto[data-foto]');
+  if (!trechos.length) return;
+  const isTouch = () => window.matchMedia('(hover: none)').matches;
+  const GUTTER = 8;
+
+  // Mantém a foto dentro da tela quando o trecho está perto da borda
+  const fit = (el, box) => {
+    el.style.setProperty('--foto-shift', '0px');
+    const r = box.getBoundingClientRect();
+    const vw = document.documentElement.clientWidth;
+    let shift = 0;
+    if (r.left < GUTTER) shift = GUTTER - r.left;
+    else if (r.right > vw - GUTTER) shift = vw - GUTTER - r.right;
+    el.style.setProperty('--foto-shift', shift + 'px');
+  };
+
+  let aberto = null;
+  const abrir = (el, box) => {
+    if (aberto && aberto !== el) aberto.classList.remove('is-open');
+    fit(el, box);
+    el.classList.add('is-open');
+    aberto = el;
+  };
+  const fechar = (el) => {
+    el.classList.remove('is-open');
+    if (aberto === el) aberto = null;
+  };
+
+  trechos.forEach((el) => {
+    const box = document.createElement('span');
+    box.className = 'hover-foto__img';
+    box.setAttribute('aria-hidden', 'true');
+    const img = document.createElement('img');
+    img.src = el.dataset.foto;
+    img.alt = '';
+    box.appendChild(img);
+    el.appendChild(box);
+    el.tabIndex = 0;
+    if (el.dataset.alt) el.setAttribute('aria-label', el.textContent.trim() + ' (foto: ' + el.dataset.alt + ')');
+
+    el.addEventListener('mouseenter', () => { if (!isTouch()) abrir(el, box); });
+    el.addEventListener('mouseleave', () => { if (!isTouch()) fechar(el); });
+    el.addEventListener('focus', () => { if (!isTouch()) abrir(el, box); });
+    el.addEventListener('blur', () => fechar(el));
+    el.addEventListener('click', (e) => {
+      if (!isTouch()) return;
+      e.stopPropagation();
+      if (el.classList.contains('is-open')) { fechar(el); el.blur(); }
+      else abrir(el, box);
+    });
+  });
+
+  document.addEventListener('click', () => { if (aberto && isTouch()) { aberto.blur(); fechar(aberto); } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && aberto) aberto.blur(); });
+  window.addEventListener('scroll', () => { if (aberto && isTouch()) { aberto.blur(); fechar(aberto); } }, { passive: true });
+})();
