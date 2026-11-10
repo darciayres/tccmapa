@@ -698,20 +698,114 @@ body.menu-open .drawer { transform: translateX(0); }
   font-weight: 500;
 }
 
-.article-text .servico {
+/* ---------- Cartão de visitas (fim da matéria) ----------
+   Componente "cartão de visitas barco" do Figma. Parado fica no lugar;
+   com o mouse por cima, sobe um pouco e inclina em 3D seguindo o cursor (main.js). */
+.cartao {
+  align-self: center;
+  width: 620px;
+  max-width: 100%;
   margin-top: 12px;
-  padding: 8px 12px;
-  border: 3px solid var(--azulescuro);
+  perspective: 900px;
+  transition: transform 0.5s ease-out;
+}
+
+/* Com o mouse em cima, o cartão sobe um pouco (parado, ele fica no lugar) */
+.cartao.is-ativo { transform: translateY(-4px); }
+
+.cartao__corpo {
+  position: relative;
+  overflow: hidden;
+  padding: 12px 20px;
+  border: 6px solid var(--azulescuro);
   border-radius: 12px;
   background: var(--azulclaro);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   color: var(--fundo);
+  box-shadow: 0 4px 23.7px rgba(0, 0, 0, 0.25);
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--escala, 1));
+  transition: transform 0.5s ease-out, box-shadow 0.5s ease-out;
+  will-change: transform;
+}
+
+/* Brilho que acompanha o mouse */
+.cartao__corpo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.22), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+  pointer-events: none;
+}
+
+.cartao.is-ativo .cartao__corpo {
+  --escala: 1.01;
+  transition: transform 0.12s ease-out, box-shadow 0.3s ease-out;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+}
+
+.cartao.is-ativo .cartao__corpo::after { opacity: 1; }
+
+.article-text .cartao__texto {
+  position: relative;
+  z-index: 1;
+  margin: 0;
   font-family: 'Roboto', system-ui, sans-serif;
   font-weight: 500;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 36px;
-  letter-spacing: 0.12px;
+  letter-spacing: 0.1px;
   text-align: left;
+}
+
+.cartao__texto strong { font-weight: 800; }
+
+/* Ícone no canto inferior direito, cortado pela borda como no Figma.
+   Posições medidas nas variantes do componente "cartão de visitas" (620px). */
+.cartao__icone {
+  position: absolute;
+  color: var(--azulescuro);
+  pointer-events: none;
+}
+
+.cartao__icone--barco { right: 19.5px; bottom: -6.5px; width: 114px; height: 138px; }
+.cartao__icone--sombrinha { right: -31px; bottom: -13px; width: 162px; height: 161px; }
+.cartao__icone--cacto { right: -10.5px; bottom: -10.5px; width: 125px; height: 166px; }
+
+.cartao__texto a { color: inherit; text-decoration: underline; }
+
+/* ---------- Placeholder de foto/vídeo que ainda não temos ----------
+   Mesmo componente "Placeholder mídia" do Figma */
+.midia-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 728 / 360;
+  border: 2px dashed rgba(67, 132, 211, 0.6);
+  border-radius: 13px;
+  background: rgba(67, 132, 211, 0.15);
+  color: var(--azulescuro);
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.article-hero .midia-placeholder { height: 100%; aspect-ratio: auto; }
+
+/* Estilo "subtítulo" do Figma */
+.article-subtitle {
+  margin: 0;
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -0.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cartao { transition: none; transform: none; }
+  .cartao__corpo { transition: none; transform: none; }
 }
 
 /* ---------- Trecho com foto (componente "hover_texto" do Figma) ----------

@@ -441,3 +441,32 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && aberto) aberto.blur(); });
   window.addEventListener('scroll', () => { if (aberto && isTouch()) { aberto.blur(); fechar(aberto); } }, { passive: true });
 })();
+
+/* ---------- Cartão de visitas: inclina seguindo o mouse ----------
+   Só com mouse (no touch o cartão fica parado). */
+(function () {
+  const cartoes = document.querySelectorAll('[data-cartao]');
+  if (!cartoes.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const MAX = 3; // inclinação máxima em graus
+
+  cartoes.forEach((cartao) => {
+    const corpo = cartao.querySelector('.cartao__corpo');
+    cartao.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const r = corpo.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;  // 0 a 1
+      const y = (e.clientY - r.top) / r.height;  // 0 a 1
+      cartao.classList.add('is-ativo');
+      corpo.style.setProperty('--ry', ((x - 0.5) * 2 * MAX).toFixed(2) + 'deg');
+      corpo.style.setProperty('--rx', ((0.5 - y) * 2 * MAX).toFixed(2) + 'deg');
+      corpo.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+      corpo.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+    });
+    cartao.addEventListener('pointerleave', () => {
+      cartao.classList.remove('is-ativo');
+      corpo.style.setProperty('--rx', '0deg');
+      corpo.style.setProperty('--ry', '0deg');
+    });
+  });
+})();
