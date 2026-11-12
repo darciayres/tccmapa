@@ -470,3 +470,39 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     });
   });
 })();
+
+// Dado animado da matéria 4: quando o bloco aparece na tela, os ícones dos
+// fotógrafos entram um a um e o número conta junto até o total.
+(() => {
+  const blocos = document.querySelectorAll('[data-dado]');
+  if (!blocos.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const PASSO = 55; // ms entre um ícone e o próximo
+
+  blocos.forEach((bloco) => {
+    const pessoas = bloco.querySelectorAll('.dado__pessoa');
+    const numero = bloco.querySelector('[data-dado-numero]');
+    const total = Number(numero.dataset.dadoNumero);
+    bloco.classList.add('is-esperando');
+    numero.textContent = '0';
+
+    const obs = new IntersectionObserver((entradas) => {
+      if (!entradas[0].isIntersecting) return;
+      obs.disconnect();
+      pessoas.forEach((p, i) => { p.style.transitionDelay = `${i * PASSO}ms`; });
+      bloco.classList.remove('is-esperando');
+
+      const duracao = pessoas.length * PASSO + 300;
+      const inicio = performance.now();
+      const contar = (agora) => {
+        const t = Math.min((agora - inicio) / duracao, 1);
+        numero.textContent = String(Math.round(t * total));
+        if (t < 1) requestAnimationFrame(contar);
+      };
+      requestAnimationFrame(contar);
+    }, { threshold: 0.6 });
+    obs.observe(bloco);
+  });
+})();
