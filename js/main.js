@@ -5,7 +5,7 @@ const MATERIA_TITLES = {
   1: 'Matéria 1',
   2: 'Matéria 2',
   3: 'O rio também é turismo',
-  4: 'Matéria 4',
+  4: 'Saindo do óbvio: histórias de quem trabalha com o turismo',
   5: 'Matéria 5',
   6: 'Matéria 6',
 };
