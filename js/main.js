@@ -2,7 +2,6 @@
 // o texto do hover das fotos e os cards/tooltips dos pins.
 // Quando uma matéria ganhar título, troque só aqui.
 const MATERIA_TITLES = {
-  1: 'Matéria 1',
   2: 'Matéria 2',
   3: 'O rio também é turismo',
   4: 'Saindo do óbvio: histórias de quem trabalha com o turismo',
@@ -15,7 +14,6 @@ const MATERIA_TITLES = {
 // dos pins quando a matéria não tem uma própria. Quando uma matéria ganhar foto,
 // troque só aqui.
 const MATERIA_PHOTOS = {
-  1: 'assets/images/materia-1.png',
   2: 'assets/images/materia-2.png',
   3: 'assets/images/materia-3-card.jpg',
   4: 'assets/images/materia-4.png',
@@ -102,16 +100,19 @@ document.querySelectorAll('.nav__item.is-active').forEach((item) => {
 // Componente do mapa: monta o mapa e os pins em todo <div class="map" data-map="...">.
 // Numa página de matéria, data-current="N" destaca o pin da matéria atual.
 //
-// Mapa interativo (MapLibre + OpenFreeMap). Cada pin é uma coordenada real:
-// para mudar a posição, troque lat/lng (no Google Maps, clique com o botão
-// direito no ponto e copie os números). POSIÇÕES PROVISÓRIAS.
+// Mapa interativo (MapLibre + OpenFreeMap). Cada ponto é um LOCAL real, com as
+// matérias que falam dele. Cada matéria vira um pin com o seu card; quando o
+// local tem mais de uma, os pins ficam lado a lado. Uma matéria pode aparecer
+// em mais de um local.
+// Coordenadas enviadas em graus/minutos/segundos e convertidas para decimal.
 const MAP_POINTS = [
-  { materia: 1, lat: -8.06305, lng: -34.87108 }, // Marco Zero
-  { materia: 2, lat: -8.06175, lng: -34.87185 }, // Rua do Bom Jesus
-  { materia: 3, lat: -8.06420, lng: -34.87040 }, // cais do Marco Zero (Capibaribe Tour)
-  { materia: 4, lat: -8.05330, lng: -34.87000 }, // Forte do Brum
-  { materia: 5, lat: -8.06520, lng: -34.87205 }, // Cais do Sertão
-  { materia: 6, lat: -8.06045, lng: -34.87265 }, // Torre Malakoff
+  { nome: 'Marco Zero', materias: [4], lat: -8.063167, lng: -34.871139 },
+  { nome: 'Capibaribe Tour', materias: [3], lat: -8.063357, lng: -34.87064 },
+  { nome: 'Paço do Frevo', materias: [5], lat: -8.0615, lng: -34.871583 },
+  { nome: 'Frio na Goela', materias: [4], lat: -8.063056, lng: -34.872306 },
+  { nome: 'Centro de Atendimento ao Turista', materias: [6], lat: -8.061083, lng: -34.871722 },
+  { nome: 'Cais do Sertão', materias: [5], lat: -8.060306, lng: -34.87 },
+  { nome: 'Matéria 2', materias: [2], lat: -8.061389, lng: -34.871056 },
 ];
 
 // Até onde o mapa pode ser arrastado: MAP_MARGIN_KM além dos pins mais distantes,
@@ -146,12 +147,18 @@ function applyPalette(map) {
   }
 }
 
+const tituloDa = (n) => MATERIA_TITLES[n] || 'Matéria ' + n;
+
+// Distância (px) entre pins do mesmo local: um ao lado do outro, centrados no ponto
+const PIN_LADO_A_LADO = 34;
+const deslocamento = (i, total) => (i - (total - 1) / 2) * PIN_LADO_A_LADO;
+
 function buildPin(materia, current) {
   const pin = document.createElement('a');
   pin.className = 'pin';
   pin.href = 'materia-' + materia + '.html';
-  pin.title = MATERIA_TITLES[materia] || 'Matéria ' + materia;
-  pin.dataset.materia = materia;
+  pin.title = tituloDa(materia);
+  pin.dataset.materias = String(materia);
   if (String(materia) === current) {
     pin.classList.add('is-current');
     pin.setAttribute('aria-current', 'page');
@@ -191,37 +198,44 @@ function buildInteractiveMap(container, current) {
   });
   window.addEventListener('resize', () => map.resize());
 
-  MAP_POINTS.forEach(({ materia, lat, lng }) => {
-    new maplibregl.Marker({ element: buildPin(materia, current), anchor: 'bottom' })
-      .setLngLat([lng, lat])
-      .addTo(map);
+  MAP_POINTS.forEach(({ materias, lat, lng }) => {
+    materias.forEach((materia, i) => {
+      new maplibregl.Marker({
+        element: buildPin(materia, current),
+        anchor: 'bottom',
+        offset: [deslocamento(i, materias.length), 0],
+      })
+        .setLngLat([lng, lat])
+        .addTo(map);
+    });
   });
 }
 
 // Reserva: sem internet ou sem a biblioteca, volta para a imagem estática
+// (posições aproximadas, em % da imagem)
 const MAPS = {
   // Mapa horizontal: página inicial no mobile e fim das matérias
   padrao: {
     image: 'assets/images/map.png',
     pins: [
-      { materia: 1, left: 60.18, top: 38.76 },
-      { materia: 2, left: 54.50, top: 25.08 },
-      { materia: 3, left: 52.59, top: 37.46 },
-      { materia: 4, left: 35.84, top: 67.52 },
-      { materia: 5, left: 26.91, top: 81.57 },
-      { materia: 6, left: 16.91, top: 81.57 },
+      { materias: [2], left: 54.50, top: 25.08 },
+      { materias: [4], left: 52.59, top: 37.46 },
+      { materias: [3], left: 55.20, top: 39.50 },
+      { materias: [4], left: 35.84, top: 67.52 },
+      { materias: [5], left: 26.91, top: 81.57 },
+      { materias: [6], left: 16.91, top: 81.57 },
     ],
   },
-  // Mapa vertical da coluna da direita (página inicial no desktop). Posições provisórias.
+  // Mapa vertical da coluna da direita (página inicial no desktop)
   coluna: {
     image: 'assets/images/mapa-coluna.png',
     pins: [
-      { materia: 1, left: 14.65, top: 83.11 },
-      { materia: 2, left: 55.68, top: 73.90 },
-      { materia: 3, left: 87.91, top: 48.79 },
-      { materia: 4, left: 19.41, top: 52.41 },
-      { materia: 5, left: 66.30, top: 32.13 },
-      { materia: 6, left: 67.03, top: 57.24 },
+      { materias: [2], left: 55.68, top: 73.90 },
+      { materias: [4], left: 87.91, top: 48.79 },
+      { materias: [3], left: 92.00, top: 50.50 },
+      { materias: [4], left: 19.41, top: 52.41 },
+      { materias: [5], left: 66.30, top: 32.13 },
+      { materias: [6], left: 67.03, top: 57.24 },
     ],
   },
 };
@@ -239,11 +253,13 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
   base.alt = 'Mapa do Recife';
   map.append(base);
 
-  config.pins.forEach(({ materia, left, top }) => {
-    const pin = buildPin(materia, current);
-    pin.style.left = left + '%';
-    pin.style.top = top + '%';
-    map.append(pin);
+  config.pins.forEach(({ materias, left, top }) => {
+    materias.forEach((materia, i) => {
+      const pin = buildPin(materia, current);
+      pin.style.left = 'calc(' + left + '% + ' + deslocamento(i, materias.length) + 'px)';
+      pin.style.top = top + '%';
+      map.append(pin);
+    });
   });
 });
 
@@ -252,13 +268,16 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
 // Touch: 1º toque seleciona o pin (etiqueta do Pin_Mobile + foto destacada),
 //        2º toque no pin ou na etiqueta abre a matéria. Fotos seguem o mesmo padrão.
 (function () {
-  const pins = document.querySelectorAll('.pin[data-materia]');
+  const pins = document.querySelectorAll('.pin[data-materias]');
   const strip = document.querySelector('.photos');
   const isTouch = () => window.matchMedia('(hover: none)').matches;
   let selected = null;
 
-  const photoFor = (pin) =>
-    document.querySelector('.photo-card[data-materia="' + pin.dataset.materia + '"]');
+  const materiasDo = (pin) => pin.dataset.materias.split(' ');
+  const photosFor = (pin) =>
+    materiasDo(pin)
+      .map((n) => document.querySelector('.photo-card[data-materia="' + n + '"]'))
+      .filter(Boolean);
 
   function scrollStripTo(photo) {
     if (!strip || strip.scrollWidth <= strip.clientWidth) return;
@@ -274,17 +293,20 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     label.style.setProperty('--label-shift', '0px');
     const r = label.getBoundingClientRect();
     const margin = 8;
+    // Limites: a tela e o próprio mapa (que corta o que passa da borda)
+    const box = label.closest('.map').getBoundingClientRect();
+    const minX = Math.max(0, box.left) + margin;
+    const maxX = Math.min(window.innerWidth, box.right) - margin;
     let shift = 0;
-    if (r.left < margin) shift = margin - r.left;
-    else if (r.right > window.innerWidth - margin) shift = window.innerWidth - margin - r.right;
+    if (r.left < minX) shift = minX - r.left;
+    else if (r.right > maxX) shift = maxX - r.right;
     label.style.setProperty('--label-shift', shift + 'px');
   }
 
   function deselect() {
     if (!selected) return;
     selected.classList.remove('is-selected');
-    const photo = photoFor(selected);
-    if (photo) photo.classList.remove('is-linked-hover');
+    photosFor(selected).forEach((photo) => photo.classList.remove('is-linked-hover'));
     selected = null;
   }
 
@@ -293,32 +315,36 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     selected = pin;
     pin.classList.add('is-selected');
     keepLabelOnScreen(pin.querySelector('.pin__label'));
-    const photo = photoFor(pin);
-    if (photo) {
-      photo.classList.add('is-linked-hover');
-      scrollStripTo(photo);
-    }
+    const photos = photosFor(pin);
+    photos.forEach((photo) => photo.classList.add('is-linked-hover'));
+    if (photos[0]) scrollStripTo(photos[0]);
   }
 
   pins.forEach((pin) => {
+    // Card da matéria do pin (o pin inteiro é o link)
     const label = document.createElement('span');
     label.className = 'pin__label';
-    const thumb = document.createElement('img');
-    thumb.src = MATERIA_PIN_THUMBS[pin.dataset.materia] || MATERIA_PHOTOS[pin.dataset.materia];
-    thumb.alt = '';
-    const text = document.createElement('span');
-    text.textContent = pin.title;
-    label.append(thumb, text);
+    materiasDo(pin).forEach((n) => {
+      const card = document.createElement('span');
+      card.className = 'pin__card';
+      const thumb = document.createElement('img');
+      thumb.src = MATERIA_PIN_THUMBS[n] || MATERIA_PHOTOS[n];
+      thumb.alt = '';
+      const text = document.createElement('span');
+      text.textContent = tituloDa(n);
+      card.append(thumb, text);
+      label.append(card);
+    });
     pin.append(label);
 
     if (pin.closest('.map--article, .map--coluna')) {
       pin.addEventListener('mouseenter', () => { if (!isTouch()) keepLabelOnScreen(label); });
     }
 
-    const photo = photoFor(pin);
-    if (photo) {
-      const on = () => { if (!isTouch()) photo.classList.add('is-linked-hover'); };
-      const off = () => { if (!isTouch()) photo.classList.remove('is-linked-hover'); };
+    const photos = photosFor(pin);
+    if (photos.length) {
+      const on = () => { if (!isTouch()) photos.forEach((p) => p.classList.add('is-linked-hover')); };
+      const off = () => { if (!isTouch()) photos.forEach((p) => p.classList.remove('is-linked-hover')); };
       pin.addEventListener('mouseenter', on);
       pin.addEventListener('mouseleave', off);
       pin.addEventListener('focus', on);
@@ -348,10 +374,11 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
   }
 
   document.querySelectorAll('.photo-card').forEach((photo) => {
-    const pin = document.querySelector('.pin[data-materia="' + photo.dataset.materia + '"]');
-    if (pin) {
-      const on = () => { if (!isTouch()) pin.classList.add('is-linked-hover'); };
-      const off = () => { if (!isTouch()) pin.classList.remove('is-linked-hover'); };
+    // Uma matéria pode estar em mais de um local: acende todos os pins dela
+    const linkedPins = document.querySelectorAll('.pin[data-materias~="' + photo.dataset.materia + '"]');
+    if (linkedPins.length) {
+      const on = () => { if (!isTouch()) linkedPins.forEach((pin) => pin.classList.add('is-linked-hover')); };
+      const off = () => { if (!isTouch()) linkedPins.forEach((pin) => pin.classList.remove('is-linked-hover')); };
       photo.addEventListener('mouseenter', on);
       photo.addEventListener('mouseleave', off);
       photo.addEventListener('focus', on);
