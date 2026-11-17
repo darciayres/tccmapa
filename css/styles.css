@@ -810,6 +810,9 @@ body.menu-open .drawer { transform: translateX(0); }
 
 .article-text .cartao--perfil .cartao__texto { font-weight: 400; }
 
+/* Lista com marcadores (tópicos) dentro do cartão, como no Figma */
+.article-text .cartao__lista { padding-left: 30px; list-style: disc; }
+
 /* ---------- Frase em destaque logo abaixo do título da matéria ----------
    Mesmo bloco da citação da página inicial, sem o ícone de aspas */
 .destaque {
@@ -1045,13 +1048,10 @@ body.menu-open .drawer { transform: translateX(0); }
 /* ---------- Sidebar compacta em telas baixas ----------
    Em janelas com pouca altura (notebooks, ou Windows com zoom de 125%/150%)
    a sidebar no tamanho do Figma não cabe e os últimos itens eram cortados.
-   Abaixo de 820px de altura, logo, nome e itens ficam menores; acima disso
+   Abaixo de 820px de altura, os itens do menu ficam menores (a marca não muda); acima disso
    a sidebar continua exatamente como no Figma. */
 @media (min-width: 1181px) and (max-height: 820px) {
   .sidebar { padding: 24px; gap: 16px; }
-  .sidebar .brand { gap: 6px; }
-  .sidebar .brand__avatar { width: 64px; height: 72px; padding: 8px; }
-  .sidebar .brand__name { font-size: 26px; }
   .sidebar .nav { gap: 6px; }
   .sidebar .nav__item { padding: 6px 20px 6px 12px; font-size: 20px; line-height: 24px; }
 }
