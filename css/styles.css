@@ -913,6 +913,9 @@ body.menu-open .drawer { transform: translateX(0); }
   border-radius: 13px;
 }
 
+/* Dado animado ao lado de um vídeo (matéria 3): barcos em cima, número embaixo */
+.linha > .dado { flex: 1 1 0; min-width: 0; flex-direction: column; gap: 24px; }
+
 .linha__figura {
   display: flex;
   flex-direction: column;
@@ -963,6 +966,10 @@ body.menu-open .drawer { transform: translateX(0); }
   height: 35.5px;
   transition: opacity 0.35s ease-out, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+/* Variante da matéria 3: 15 barcos, um por barqueiro (5 por linha, como no Figma) */
+.dado--barcos .dado__pessoas { grid-template-columns: repeat(5, 41px); column-gap: 3px; row-gap: 9px; }
+.dado--barcos .dado__pessoa { width: 41px; height: 51px; }
 
 .dado.is-esperando .dado__pessoa { opacity: 0; transform: translateY(8px) scale(0.6); }
 
@@ -1146,7 +1153,9 @@ body.menu-open .drawer { transform: translateX(0); }
   .linha__figura { flex: none; width: 100%; }
 
   /* Vídeo vertical ao lado do texto: não ocupa a largura toda no celular */
-  .linha > video.linha__foto { width: 264px; max-width: 100%; align-self: center; }
+  .linha > video.linha__foto,
+  .linha > .linha__foto--vertical { width: 264px; max-width: 100%; align-self: center; }
+  .linha > .dado { flex: none; }
 
   .midias { gap: 8px; }
 
@@ -1163,4 +1172,6 @@ body.menu-open .drawer { transform: translateX(0); }
   .dado { flex-direction: column; gap: 16px; }
   .dado__pessoas { grid-template-columns: repeat(7, 32px); column-gap: 6px; }
   .dado__pessoa { width: 32px; height: 32.5px; }
+  .dado--barcos .dado__pessoas { grid-template-columns: repeat(5, 35px); column-gap: 3px; row-gap: 8px; }
+  .dado--barcos .dado__pessoa { width: 35px; height: 43.5px; }
 }

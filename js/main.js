@@ -498,8 +498,8 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
   });
 })();
 
-// Dado animado da matéria 4: quando o bloco aparece na tela, os ícones dos
-// fotógrafos entram um a um e o número conta junto até o total.
+// Dados animados (fotógrafos na matéria 4, barqueiros na matéria 3): quando o
+// bloco aparece na tela, os ícones entram um a um e o número conta junto até o total.
 (() => {
   const blocos = document.querySelectorAll('[data-dado]');
   if (!blocos.length) return;
