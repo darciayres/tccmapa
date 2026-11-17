@@ -14,17 +14,21 @@ const MATERIA_TITLES = {
 // dos pins quando a matéria não tem uma própria. Quando uma matéria ganhar foto,
 // troque só aqui.
 const MATERIA_PHOTOS = {
-  2: 'assets/images/materia-2.png',
+  2: 'assets/images/materia-2-card.jpg',
   3: 'assets/images/materia-3-card.jpg',
-  4: 'assets/images/materia-4.png',
-  5: 'assets/images/materia-5.png',
-  6: 'assets/images/materia-6.png',
+  4: 'assets/images/materia-4-card.jpg',
+  5: 'assets/images/materia-5-card.jpg',
+  6: 'assets/images/materia-6-card.jpg',
 };
 
 // Miniatura do card dos pins, quando tiver um enquadramento próprio (feito no
 // Figma, na instância "Pin Matéria N (card)"). Sem entrada aqui, usa a foto principal.
 const MATERIA_PIN_THUMBS = {
+  2: 'assets/images/materia-2-pin.jpg',
   3: 'assets/images/materia-3-pin.jpg',
+  4: 'assets/images/materia-4-pin.jpg',
+  5: 'assets/images/materia-5-pin-terra.jpg',
+  6: 'assets/images/materia-6-pin.jpg',
 };
 
 document.querySelectorAll('.nav__item[href^="materia-"]').forEach((item) => {
@@ -108,10 +112,10 @@ document.querySelectorAll('.nav__item.is-active').forEach((item) => {
 const MAP_POINTS = [
   { nome: 'Marco Zero', materias: [4], lat: -8.063167, lng: -34.871139 },
   { nome: 'Capibaribe Tour', materias: [3], lat: -8.063357, lng: -34.87064 },
-  { nome: 'Paço do Frevo', materias: [5], lat: -8.0615, lng: -34.871583 },
+  { nome: 'Paço do Frevo', materias: [5], lat: -8.0615, lng: -34.871583, fotos: { 5: 'assets/images/materia-5-pin-terra.jpg' } },
   { nome: 'Frio na Goela', materias: [4], lat: -8.063056, lng: -34.872306 },
   { nome: 'Centro de Atendimento ao Turista', materias: [6], lat: -8.061083, lng: -34.871722 },
-  { nome: 'Cais do Sertão', materias: [5], lat: -8.060306, lng: -34.87 },
+  { nome: 'Cais do Sertão', materias: [5], lat: -8.060306, lng: -34.87, fotos: { 5: 'assets/images/materia-5-pin-rio.jpg' } },
   { nome: 'Matéria 2', materias: [2], lat: -8.061389, lng: -34.871056 },
 ];
 
@@ -198,10 +202,13 @@ function buildInteractiveMap(container, current) {
   });
   window.addEventListener('resize', () => map.resize());
 
-  MAP_POINTS.forEach(({ materias, lat, lng }) => {
+  MAP_POINTS.forEach(({ materias, lat, lng, fotos }) => {
     materias.forEach((materia, i) => {
+      const pin = buildPin(materia, current);
+      // Foto própria deste local (ex.: matéria 5 tem um pin no Paço e outro no Cais)
+      if (fotos && fotos[materia]) pin.dataset.thumb = fotos[materia];
       new maplibregl.Marker({
-        element: buildPin(materia, current),
+        element: pin,
         anchor: 'bottom',
         offset: [deslocamento(i, materias.length), 0],
       })
@@ -328,7 +335,7 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
       const card = document.createElement('span');
       card.className = 'pin__card';
       const thumb = document.createElement('img');
-      thumb.src = MATERIA_PIN_THUMBS[n] || MATERIA_PHOTOS[n];
+      thumb.src = pin.dataset.thumb || MATERIA_PIN_THUMBS[n] || MATERIA_PHOTOS[n];
       thumb.alt = '';
       const text = document.createElement('span');
       text.textContent = tituloDa(n);
