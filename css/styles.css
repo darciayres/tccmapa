@@ -1144,6 +1144,23 @@ body.menu-open .drawer { transform: translateX(0); }
 
 .hover-foto:focus-visible { outline: 2px solid var(--azulclaro); outline-offset: 2px; }
 
+/* ---------- Rodapé (créditos do TCC) ---------- */
+.rodape {
+  margin-top: 40px;
+  padding: 24px 0 8px;
+  border-top: 1px solid color-mix(in srgb, var(--azulclaro) 35%, transparent);
+}
+
+.rodape p {
+  margin: 0;
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--preto);
+  text-align: center;
+}
+
 /* ---------- Responsive: switch to mobile layout ---------- */
 
 /* ---------- Sidebar compacta em telas baixas ----------
@@ -1173,6 +1190,9 @@ body.menu-open .drawer { transform: translateX(0); }
 
   .content { display: flex; flex-direction: column; gap: 0; padding: 24px; margin-left: 0; min-width: 0; }
   .content--with-photos { margin-right: 0; padding-left: 24px; }
+
+  .rodape { margin-top: 24px; padding: 20px 0 24px; }
+  .rodape p { font-size: 13px; line-height: 19px; }
 
   .body-col, .article-col {
     width: 100%;
