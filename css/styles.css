@@ -548,7 +548,7 @@ body.menu-open .drawer { transform: translateX(0); }
   line-height: 1.3;
   padding: 1px 6px;
   border-radius: 6px 0 0 0;
-  background: rgba(245, 245, 245, 0.75);
+  background: color-mix(in srgb, var(--fundo) 75%, transparent);
 }
 .map--live .maplibregl-ctrl-attrib:not(.maplibregl-compact) a { color: var(--preto); }
 
@@ -751,7 +751,7 @@ body.menu-open .drawer { transform: translateX(0); }
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.22), transparent 55%);
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--fundo) 22%, transparent), transparent 55%);
   opacity: 0;
   transition: opacity 0.4s ease-out;
   pointer-events: none;
@@ -840,9 +840,9 @@ body.menu-open .drawer { transform: translateX(0); }
   justify-content: center;
   width: 100%;
   aspect-ratio: 16 / 9;
-  border: 2px dashed rgba(67, 132, 211, 0.6);
+  border: 2px dashed color-mix(in srgb, var(--azulclaro) 60%, transparent);
   border-radius: 13px;
-  background: rgba(67, 132, 211, 0.15);
+  background: color-mix(in srgb, var(--azulclaro) 15%, transparent);
   color: var(--azulescuro);
   font-family: 'Roboto', system-ui, sans-serif;
   font-weight: 500;
@@ -888,7 +888,88 @@ body.menu-open .drawer { transform: translateX(0); }
   letter-spacing: -1px;
 }
 
+/* Links no meio do texto: azul claro e sublinhados (como no Figma) */
+.article-text p a { color: var(--azulclaro); text-decoration: underline; text-underline-offset: 2px; }
+
 .article-credito a { color: var(--azulclaro); text-decoration: underline; }
+
+/* Foto (ou grupo de mídias) com crédito embaixo, alinhado à direita */
+.article-figura {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 0;
+}
+.article-figura > :not(figcaption) { align-self: stretch; }
+
+/* Vídeo quadrado sozinho: não ocupa a largura toda */
+.article-figura--unica { align-self: center; width: 356px; max-width: 100%; }
+.article-figura--unica .midia-video { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 13px; }
+
+/* ---------- Infográfico da matéria 6 (Figma: "animação infográfico") ----------
+   Desktop: posições do Figma (728 × 389). Celular: o círculo grande em cima e
+   os dois menores lado a lado, sem a seta. main.js anima quando aparece na tela. */
+@property --p { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+.info6 { position: relative; width: 100%; height: 389px; margin: 0; color: var(--azulescuro); font-family: 'Roboto', system-ui, sans-serif; }
+.info6__item { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.info6__item--empregos { left: 81px; top: 71px; width: 229px; }
+.info6__item--cnpj { left: 388px; top: 12px; width: 183px; }
+.info6__item--rmr { left: 495px; top: 189px; width: 152px; }
+.info6__seta { position: absolute; left: 374.5px; top: 203.5px; width: 113px; height: 116px; overflow: visible; }
+
+.info6__circulo { position: relative; flex: none; width: 134px; height: 134px; border-radius: 50%; background: var(--azulescuro); color: var(--fundo); font-weight: 900; line-height: normal; text-align: center; }
+.info6__item--empregos .info6__circulo { width: 200px; height: 200px; }
+.info6__circulo > span { position: absolute; left: 0; right: 0; white-space: nowrap; }
+.info6__num { font-variant-numeric: tabular-nums; }
+
+.info6__item--empregos .info6__pre { top: 17px; font-size: 36px; }
+.info6__item--empregos .info6__num { top: 48px; font-size: 90px; }
+.info6__item--empregos .info6__suf { top: 131px; font-size: 48px; }
+.info6__item--cnpj .info6__pre { top: 11px; font-size: 24px; }
+.info6__item--cnpj .info6__num { top: 30px; font-size: 64px; }
+.info6__item--cnpj .info6__suf { top: 89px; font-size: 32px; }
+
+/* Pizza de 57%: começa às 3 horas e gira no sentido horário, como no Figma */
+.info6__circulo--pizza { background: conic-gradient(from 90deg, var(--azulescuro) calc(var(--p) * 1%), transparent 0); }
+.info6__circulo--pizza .info6__num { left: 22px; right: auto; width: 65px; top: 64px; font-size: 56px; }
+.info6__circulo--pizza .info6__pct { left: 79px; right: auto; top: 86px; font-size: 32px; }
+
+.article-text .info6__rotulo { margin: 0; font-family: 'Roboto', system-ui, sans-serif; font-weight: 500; font-size: 20px; line-height: normal; letter-spacing: 0; text-align: center; color: var(--azulescuro); }
+
+/* Animação: círculos crescem, números contam, seta se desenha, pizza enche.
+   As transições só valem na entrada (sem .is-esperando): esconder é instantâneo,
+   para nada aparecer pronto e sumir antes de animar. */
+.info6:not(.is-esperando) .info6__circulo { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out; }
+.info6:not(.is-esperando) .info6__rotulo { transition: opacity 0.4s ease-out, transform 0.4s ease-out; }
+/* Seta: a linha se desenha do começo ao fim (pathLength="100" no SVG) e a ponta
+   "estala" no final, crescendo a partir da própria ponta */
+.info6__seta-linha { stroke-dasharray: 100 101; stroke-dashoffset: 0; }
+.info6__seta-ponta { transform-box: fill-box; transform-origin: 100% 42%; }
+.info6:not(.is-esperando) .info6__seta-linha { transition: stroke-dashoffset 0.7s cubic-bezier(0.45, 0, 0.25, 1) 0.9s; }
+.info6:not(.is-esperando) .info6__seta-ponta { transition: opacity 0.15s ease-out 1.55s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 1.55s; }
+.info6:not(.is-esperando) .info6__item--cnpj .info6__circulo,
+.info6:not(.is-esperando) .info6__item--cnpj .info6__rotulo { transition-delay: 0.35s; }
+.info6:not(.is-esperando) .info6__item--rmr .info6__circulo,
+.info6:not(.is-esperando) .info6__item--rmr .info6__rotulo { transition-delay: 1.65s; }
+
+.info6.is-esperando .info6__circulo { transform: scale(0.4); opacity: 0; }
+.info6.is-esperando .info6__rotulo { opacity: 0; transform: translateY(8px); }
+.info6.is-esperando .info6__seta-linha { stroke-dashoffset: 100; }
+.info6.is-esperando .info6__seta-ponta { opacity: 0; transform: scale(0.3); }
+
+@media (max-width: 1180px) {
+  .info6 { height: auto; display: grid; grid-template-columns: 1fr 1fr; row-gap: 24px; justify-items: center; padding: 8px 0; }
+  .info6__item { position: static; width: auto; }
+  .info6__item--empregos { grid-column: 1 / -1; }
+  .info6__seta { display: none; }
+  .article-text .info6__rotulo { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info6 * { transition: none !important; }
+}
 
 /* Texto e foto lado a lado (32px entre eles), centrados na vertical */
 .linha {
@@ -942,7 +1023,7 @@ body.menu-open .drawer { transform: translateX(0); }
   border-radius: 13px;
 }
 
-.midia-video { background: #000; }
+.midia-video { background: var(--preto); }
 
 /* ---------- Dado animado: 27 fotógrafos cadastrados ----------
    Ícones entram um a um e o número conta até 27 quando o bloco aparece na tela (main.js) */
@@ -1040,6 +1121,19 @@ body.menu-open .drawer { transform: translateX(0); }
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Crédito pequeno sobre a foto do hover */
+.hover-foto__credito {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--fundo);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
 }
 
 .hover-foto.is-open .hover-foto__img {

@@ -5,8 +5,8 @@ const MATERIA_TITLES = {
   2: 'Matéria 2',
   3: 'O rio também é turismo',
   4: 'Saindo do óbvio: histórias de quem trabalha com o turismo',
-  5: 'Matéria 5',
-  6: 'Matéria 6',
+  5: 'Por trás dos museus do Recife Antigo',
+  6: 'O que a gestão pública faz pelos trabalhadores de turismo?',
 };
 
 // Foto do card de cada matéria na página inicial (enquadramento feito no Figma,
@@ -448,6 +448,7 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
   };
 
   trechos.forEach((el) => {
+    const rotulo = el.textContent.trim();
     const box = document.createElement('span');
     box.className = 'hover-foto__img';
     box.setAttribute('aria-hidden', 'true');
@@ -455,9 +456,15 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     img.src = el.dataset.foto;
     img.alt = '';
     box.appendChild(img);
+    if (el.dataset.credito) {
+      const cred = document.createElement('span');
+      cred.className = 'hover-foto__credito';
+      cred.textContent = el.dataset.credito;
+      box.appendChild(cred);
+    }
     el.appendChild(box);
     el.tabIndex = 0;
-    if (el.dataset.alt) el.setAttribute('aria-label', el.textContent.trim() + ' (foto: ' + el.dataset.alt + ')');
+    if (el.dataset.alt) el.setAttribute('aria-label', rotulo + ' (foto: ' + el.dataset.alt + ')');
 
     el.addEventListener('mouseenter', () => { if (!isTouch()) abrir(el, box); });
     el.addEventListener('mouseleave', () => { if (!isTouch()) fechar(el); });
@@ -537,6 +544,48 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
       };
       requestAnimationFrame(contar);
     }, { threshold: 0.6 });
+    obs.observe(bloco);
+  });
+})();
+
+// Infográfico da matéria 6: quando aparece na tela, os círculos entram um a um,
+// os números contam até o valor e a pizza enche até 57%.
+(() => {
+  const blocos = document.querySelectorAll('[data-info]');
+  if (!blocos.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  // [início em ms, duração em ms] de cada número, na ordem em que aparecem
+  const TEMPOS = [[0, 900], [350, 800], [1650, 900]];
+  const suave = (t) => 1 - Math.pow(1 - t, 3);
+
+  blocos.forEach((bloco) => {
+    const nums = [...bloco.querySelectorAll('[data-info-num]')];
+    const pizza = bloco.querySelector('.info6__circulo--pizza');
+    nums.forEach((n) => { n.textContent = '0'; });
+    if (pizza) pizza.style.setProperty('--p', '0');
+    bloco.classList.add('is-esperando');
+
+    const obs = new IntersectionObserver((entradas) => {
+      if (!entradas[0].isIntersecting) return;
+      obs.disconnect();
+      bloco.classList.remove('is-esperando');
+      const inicio = performance.now();
+      const passo = (agora) => {
+        let fim = true;
+        nums.forEach((n, i) => {
+          const [ini, dur] = TEMPOS[i] || [0, 900];
+          const t = Math.min(Math.max((agora - inicio - ini) / dur, 0), 1);
+          const v = Math.round(suave(t) * Number(n.dataset.infoNum));
+          n.textContent = String(v);
+          if (pizza && pizza.contains(n)) pizza.style.setProperty('--p', String(suave(t) * Number(n.dataset.infoNum)));
+          if (t < 1) fim = false;
+        });
+        if (!fim) requestAnimationFrame(passo);
+      };
+      requestAnimationFrame(passo);
+    }, { threshold: 0.5 });
     obs.observe(bloco);
   });
 })();
