@@ -2,7 +2,7 @@
 // o texto do hover das fotos e os cards/tooltips dos pins.
 // Quando uma matéria ganhar título, troque só aqui.
 const MATERIA_TITLES = {
-  2: 'Matéria 2',
+  2: 'Olhar para um Recife ancestral',
   3: 'O rio também é turismo',
   4: 'Saindo do óbvio: histórias de quem trabalha com o turismo',
   5: 'Por trás dos museus do Recife Antigo',
@@ -296,19 +296,32 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
   }
 
   // Empurra a etiqueta para dentro da tela quando o pin fica perto da borda
+  // Mantém o card dentro do mapa (e da tela). A conta usa a posição do PIN, que
+  // não se mexe, e não a do card: o card tem animação de entrada, então medir o
+  // próprio card no meio do movimento dava resultados errados de vez em quando.
   function keepLabelOnScreen(label) {
-    label.style.setProperty('--label-shift', '0px');
-    const r = label.getBoundingClientRect();
-    const margin = 8;
-    // Limites: a tela e o próprio mapa (que corta o que passa da borda)
+    const pin = label.parentElement;
+    const p = pin.getBoundingClientRect();
     const box = label.closest('.map').getBoundingClientRect();
+    const margin = 8;
+    const w = label.offsetWidth;
+    const h = label.offsetHeight;
+
+    // Horizontal: o card nasce centrado no pin
     const minX = Math.max(0, box.left) + margin;
     const maxX = Math.min(window.innerWidth, box.right) - margin;
+    const left = p.left + p.width / 2 - w / 2;
     let shift = 0;
-    if (r.left < minX) shift = minX - r.left;
-    else if (r.right > maxX) shift = maxX - r.right;
+    if (left < minX) shift = minX - left;
+    else if (left + w > maxX) shift = maxX - (left + w);
     label.style.setProperty('--label-shift', shift + 'px');
+
+    // Vertical: se não couber acima do pin, abre embaixo dele
+    const minY = Math.max(0, box.top) + margin;
+    const cabeAcima = p.top - 8 - h >= minY;
+    label.classList.toggle('pin__label--abaixo', !cabeAcima);
   }
+
 
   function deselect() {
     if (!selected) return;
@@ -345,7 +358,9 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     pin.append(label);
 
     if (pin.closest('.map--article, .map--coluna')) {
-      pin.addEventListener('mouseenter', () => { if (!isTouch()) keepLabelOnScreen(label); });
+      const ajustar = () => { if (!isTouch()) keepLabelOnScreen(label); };
+      pin.addEventListener('mouseenter', ajustar);
+      pin.addEventListener('focus', ajustar);
     }
 
     const photos = photosFor(pin);
