@@ -498,6 +498,7 @@ body.menu-open .drawer { transform: translateX(0); }
   font-family: 'Roboto', system-ui, sans-serif;
   font-weight: 700;
   font-size: 12px;
+  line-height: normal; /* entrelinha automática da fonte, como no Figma (não herda a do texto) */
   text-align: center;
 }
 
