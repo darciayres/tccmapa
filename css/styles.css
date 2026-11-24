@@ -5,9 +5,11 @@
 
 :root {
   /* Cores: mesmos nomes das variáveis do Figma */
-  --azulclaro: #4384d3;
-  --azulescuro: #2869b9;
-  --amarelo: #fdc805;
+  /* Paleta vermelha (modo "Vermelho (Mode 2)" do Figma). Azul antigo: azulclaro #4384d3,
+     azulescuro #2869b9, amarelo #fdc805 */
+  --azulclaro: #d43033;
+  --azulescuro: #b12629;
+  --amarelo: #eec632;
   --fundo: #f5f5f5;
   --preto: #3c3c3c;
 
@@ -120,9 +122,10 @@ img, .icone-svg { display: block; max-width: 100%; }
   transition: background-color 0.3s ease-out, box-shadow 0.3s ease-out;
 }
 
+/* Hover: vermelho escuro translúcido com sombra suave */
 .nav__item:hover {
-  background: var(--azulescuro);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+  background: color-mix(in srgb, #7d1114 45%, transparent);
+  box-shadow: 0 2px 16px rgba(70, 0, 0, 0.22);
 }
 
 /* Selecionado: só texto amarelo em Bold; o fundo aparece apenas no hover */
