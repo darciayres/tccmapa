@@ -24,13 +24,8 @@
 :root[data-tema="azul"]     { --azulclaro: #1a5296; --azulescuro: #0f3a73; --preto: #2b2b2b; }
 :root[data-tema="verde"]    { --azulclaro: #095c56; --azulescuro: #05403c; --preto: #2b2b2b; }
 
-/* Vermelho: sidebar (e menu do celular) com a textura granulada do Figma */
-:root[data-tema="vermelho"] .sidebar,
-:root[data-tema="vermelho"] .drawer { background: var(--azulclaro) url(../assets/images/textura-vermelha.jpg) center / cover no-repeat; }
 :root[data-tema="vermelho"] .sidebar__grafismo { display: none; } /* sem a roda no vermelho */
-:root[data-tema="vermelho"] .topbar { background: var(--azulclaro) url(../assets/images/textura-vermelha.jpg) left 30% / 100% auto no-repeat; }
-/* Hover dos itens sobre a textura: vermelho escuro translúcido, deixa a textura aparecer
-   e mantém o texto claro legível (um bloco chapado de #B12629 "apagava" a textura) */
+/* Hover dos itens no vermelho: vermelho escuro translúcido com sombra suave */
 :root[data-tema="vermelho"] .nav__item:hover { background: color-mix(in srgb, #7d1114 45%, transparent); box-shadow: 0 2px 16px rgba(70, 0, 0, 0.22); }
 
 /* Seletor de cores flutuante */
