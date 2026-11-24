@@ -27,6 +27,7 @@
 /* Vermelho: sidebar (e menu do celular) com a textura granulada do Figma */
 :root[data-tema="vermelho"] .sidebar,
 :root[data-tema="vermelho"] .drawer { background: var(--azulclaro) url(../assets/images/textura-vermelha.jpg) center / cover no-repeat; }
+:root[data-tema="vermelho"] .sidebar__grafismo { display: none; } /* sem a roda no vermelho */
 :root[data-tema="vermelho"] .topbar { background: var(--azulclaro) url(../assets/images/textura-vermelha.jpg) left 30% / 100% auto no-repeat; }
 /* Hover dos itens sobre a textura: vermelho escuro translúcido, deixa a textura aparecer
    e mantém o texto claro legível (um bloco chapado de #B12629 "apagava" a textura) */

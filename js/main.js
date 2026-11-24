@@ -142,12 +142,13 @@ function applyPalette(map) {
   const c = (name) => css.getPropertyValue(name).trim();
   const set = (id, prop, value) => { if (map.getLayer(id)) map.setPaintProperty(id, prop, value); };
   set('background', 'background-color', c('--fundo'));
-  set('water', 'fill-color', c('--azulclaro'));
+  // Mar e rio ficam sempre nas cores do site oficial, em qualquer tema de teste
+  set('water', 'fill-color', '#4384d3');
   set('water', 'fill-opacity', 0.45);
-  set('waterway', 'line-color', c('--azulclaro'));
+  set('waterway', 'line-color', '#4384d3');
   for (const layer of map.getStyle().layers) {
     if (layer.type === 'symbol' && !/^water/.test(layer.id)) set(layer.id, 'text-color', c('--preto'));
-    if (layer.type === 'symbol' && /^water/.test(layer.id)) set(layer.id, 'text-color', c('--azulescuro'));
+    if (layer.type === 'symbol' && /^water/.test(layer.id)) set(layer.id, 'text-color', '#2869b9');
   }
 }
 
