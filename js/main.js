@@ -643,3 +643,23 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
     obs.observe(bloco);
   });
 })();
+
+// Teste de cores (só no branch teste-cores): seletor flutuante para trocar de paleta
+(() => {
+  const TEMAS = [['atual', 'Atual', '#4384d3'], ['vermelho', 'Vermelho', '#d73f42'], ['azul', 'Azul escuro', '#1a5296'], ['verde', 'Verde mangue', '#095c56']];
+  const atual = document.documentElement.getAttribute('data-tema') || 'atual';
+  const box = document.createElement('div');
+  box.className = 'tema-seletor';
+  box.setAttribute('role', 'group');
+  box.setAttribute('aria-label', 'Testar cores');
+  box.innerHTML = '<span>Cores:</span>' + TEMAS.map(([id, nome, cor]) =>
+    `<button type="button" data-tema-id="${id}" aria-pressed="${id === atual}" title="${nome}"><i style="background:${cor}"></i>${nome}</button>`).join('');
+  box.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tema-id]');
+    if (!b) return;
+    const url = new URL(location.href);
+    url.searchParams.set('tema', b.dataset.temaId);
+    location.href = url.toString(); // recarrega para o mapa pegar as cores novas
+  });
+  document.body.appendChild(box);
+})();

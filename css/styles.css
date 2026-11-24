@@ -16,6 +16,30 @@
   --content-gap: 48px;
 }
 
+/* ---------- Teste de cores (só no branch teste-cores) ----------
+   Mesmos valores dos modos de cor do Figma (página "Teste de cores").
+   Escolha pelo endereço (?tema=vermelho, ?tema=azul, ?tema=verde, ?tema=atual)
+   ou pelo seletor no canto da tela. */
+:root[data-tema="vermelho"] { --azulclaro: #d73f42; --azulescuro: #b12629; --amarelo: #eec632; --grafismo: #de3c3f; }
+:root[data-tema="azul"]     { --azulclaro: #1a5296; --azulescuro: #0f3a73; --preto: #2b2b2b; }
+:root[data-tema="verde"]    { --azulclaro: #095c56; --azulescuro: #05403c; --preto: #2b2b2b; }
+
+/* Vermelho: sidebar (e menu do celular) com a textura granulada do Figma */
+:root[data-tema="vermelho"] .sidebar,
+:root[data-tema="vermelho"] .drawer { background: var(--azulclaro) url(../assets/images/textura-vermelha.jpg) center / cover no-repeat; }
+:root[data-tema="vermelho"] .topbar { background: var(--azulclaro) url(../assets/images/textura-vermelha.jpg) left 30% / 100% auto no-repeat; }
+/* Hover dos itens sobre a textura: vermelho escuro translúcido, deixa a textura aparecer
+   e mantém o texto claro legível (um bloco chapado de #B12629 "apagava" a textura) */
+:root[data-tema="vermelho"] .nav__item:hover { background: color-mix(in srgb, #7d1114 45%, transparent); box-shadow: 0 2px 16px rgba(70, 0, 0, 0.22); }
+
+/* Seletor de cores flutuante */
+.tema-seletor { position: fixed; right: 16px; bottom: 16px; z-index: 50; display: flex; gap: 4px; align-items: center; padding: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); font-family: 'Roboto', system-ui, sans-serif; font-size: 13px; }
+.tema-seletor span { padding: 0 6px 0 8px; color: #3c3c3c; font-weight: 500; }
+.tema-seletor button { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border: 0; border-radius: 999px; background: transparent; color: #3c3c3c; font: inherit; cursor: pointer; }
+.tema-seletor button i { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15); }
+.tema-seletor button[aria-pressed="true"] { background: #3c3c3c; color: #fff; }
+@media (max-width: 1180px) { .tema-seletor { left: 50%; right: auto; transform: translateX(-50%); bottom: 12px; } .tema-seletor span { display: none; } .tema-seletor button { padding: 6px 8px; } }
+
 * { box-sizing: border-box; }
 
 html, body {
