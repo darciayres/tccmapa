@@ -166,11 +166,11 @@ function buildPin(materia, current) {
   if (String(materia) === current) {
     pin.classList.add('is-current');
     pin.setAttribute('aria-current', 'page');
-    pin.innerHTML = '<img class="pin__current" src="assets/icons/pin-current.svg" alt="">';
+    pin.innerHTML = '<svg class="icone-svg pin__current" aria-hidden="true" focusable="false"><use href="#ic-pin-current"/></svg>';
   } else {
     pin.innerHTML =
-      '<img class="pin__default" src="assets/icons/pin-default.svg" alt="">' +
-      '<img class="pin__hover" src="assets/icons/pin-hover.svg" alt="">';
+      '<svg class="icone-svg pin__default" aria-hidden="true" focusable="false"><use href="#ic-pin-default"/></svg>' +
+      '<svg class="icone-svg pin__hover" aria-hidden="true" focusable="false"><use href="#ic-pin-hover"/></svg>';
   }
   return pin;
 }
@@ -595,6 +595,45 @@ document.querySelectorAll('.map[data-map]').forEach((map) => {
           const v = Math.round(suave(t) * Number(n.dataset.infoNum));
           n.textContent = String(v);
           if (pizza && pizza.contains(n)) pizza.style.setProperty('--p', String(suave(t) * Number(n.dataset.infoNum)));
+          if (t < 1) fim = false;
+        });
+        if (!fim) requestAnimationFrame(passo);
+      };
+      requestAnimationFrame(passo);
+    }, { threshold: 0.5 });
+    obs.observe(bloco);
+  });
+})();
+
+// Dado do Olha!Recife (matéria 6): guias entram um a um, números contam
+// (cada um com seu início e duração em data-olha-ini/-dur) e o barco chega navegando.
+(() => {
+  const blocos = document.querySelectorAll('[data-olha]');
+  if (!blocos.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+  const PASSO = 55; // ms entre um guia e o próximo
+  const suave = (t) => 1 - Math.pow(1 - t, 3);
+  const fmt = (v) => v.toLocaleString('pt-BR');
+
+  blocos.forEach((bloco) => {
+    const pessoas = bloco.querySelectorAll('.olha__pessoa');
+    const nums = [...bloco.querySelectorAll('[data-olha-num]')];
+    nums.forEach((n) => { n.textContent = '0'; });
+    bloco.classList.add('is-esperando');
+
+    const obs = new IntersectionObserver((entradas) => {
+      if (!entradas[0].isIntersecting) return;
+      obs.disconnect();
+      pessoas.forEach((p, i) => { p.style.transitionDelay = (i * PASSO) + 'ms'; });
+      bloco.classList.remove('is-esperando');
+      const inicio = performance.now();
+      const passo = (agora) => {
+        let fim = true;
+        nums.forEach((n) => {
+          const ini = Number(n.dataset.olhaIni || 0), dur = Number(n.dataset.olhaDur || 900);
+          const t = Math.min(Math.max((agora - inicio - ini) / dur, 0), 1);
+          n.textContent = fmt(Math.round(suave(t) * Number(n.dataset.olhaNum)));
           if (t < 1) fim = false;
         });
         if (!fim) requestAnimationFrame(passo);

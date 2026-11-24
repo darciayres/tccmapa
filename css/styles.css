@@ -31,7 +31,7 @@ html, body {
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; }
 
-img { display: block; max-width: 100%; }
+img, .icone-svg { display: block; max-width: 100%; }
 
 /* ---------- Layout shell ---------- */
 
@@ -75,7 +75,8 @@ img { display: block; max-width: 100%; }
   flex-shrink: 0;
 }
 
-.brand__avatar img {
+.brand__avatar img,
+.brand__avatar .icone-svg {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -194,7 +195,8 @@ img { display: block; max-width: 100%; }
   cursor: pointer;
 }
 
-.topbar__menu-btn img { width: 32px; height: 32px; }
+.topbar__menu-btn img,
+.topbar__menu-btn .icone-svg { width: 32px; height: 32px; }
 
 /* ---------- Mobile nav drawer ---------- */
 
@@ -341,7 +343,8 @@ body.menu-open .drawer { transform: translateX(0); }
   gap: 16px;
 }
 
-.intro__quote img { width: 26px; height: 21px; }
+.intro__quote img,
+.intro__quote .icone-svg { width: 26px; height: 21px; }
 
 .intro__quote p {
   padding: 0 24px;
@@ -391,7 +394,8 @@ body.menu-open .drawer { transform: translateX(0); }
   cursor: pointer;
 }
 
-.pin img {
+.pin img,
+.pin .icone-svg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -399,17 +403,17 @@ body.menu-open .drawer { transform: translateX(0); }
   transition: opacity 0.2s ease-out;
 }
 
-.pin img.pin__hover { opacity: 0; }
+.pin .pin__hover { opacity: 0; }
 
 /* Em touch o :hover "gruda" depois do toque, então só vale com mouse */
 @media (hover: hover) {
-  .pin:hover img.pin__default { opacity: 0; }
-  .pin:hover img.pin__hover { opacity: 1; }
+  .pin:hover .pin__default { opacity: 0; }
+  .pin:hover .pin__hover { opacity: 1; }
 }
 
 /* Pin aceso pelo hover na foto correspondente (desktop) */
-.pin.is-linked-hover img.pin__default { opacity: 0; }
-.pin.is-linked-hover img.pin__hover { opacity: 1; }
+.pin.is-linked-hover .pin__default { opacity: 0; }
+.pin.is-linked-hover .pin__hover { opacity: 1; }
 
 /* Pin da matéria aberta (mapa no fim da página de matéria): mesmo tamanho dos
    outros, só com a bola amarela (ícone pin-current.svg, definido no main.js) */
@@ -429,8 +433,8 @@ body.menu-open .drawer { transform: translateX(0); }
 
 /* Touch: 1º toque seleciona o pin (estado "hoover" do Pin_Mobile no Figma) */
 .pin.is-selected { z-index: 3; }
-.pin.is-selected img.pin__default { opacity: 0; }
-.pin.is-selected img.pin__hover { opacity: 1; }
+.pin.is-selected .pin__default { opacity: 0; }
+.pin.is-selected .pin__hover { opacity: 1; }
 
 /* Etiqueta (card) acima do pin */
 .pin__label {
@@ -635,7 +639,8 @@ body.menu-open .drawer { transform: translateX(0); }
   letter-spacing: 0.5px;
 }
 
-.photo-card__label img {
+.photo-card__label img,
+.photo-card__label .icone-svg {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
@@ -871,6 +876,20 @@ body.menu-open .drawer { transform: translateX(0); }
 /* Subtítulo colado no item anterior (ex.: logo abaixo da foto de abertura) */
 .article-text > .article-subtitle.article-subtitle--junto { margin-top: 0; }
 
+/* Espaçamento das matérias (proposta de 24/11, ritmo de 8px; valores antigos na memória do projeto):
+   voltar→capa 16 · capa→título 32 · título→texto 32 · parágrafos 24 ·
+   blocos (foto, citação, dado, cartão) 40 · antes de subtítulo 64 · subtítulo→texto 16 */
+.article-col { gap: 16px; }
+.article-col > .article-title,
+.article-col > .destaque,
+.article-col > .article-text { margin-top: 16px; }
+.article-col > .rodape { margin-top: 48px; }
+.article-text > :not(p):not(.article-subtitle),
+.article-text > p.quote,
+.article-text > :not(p):not(.article-subtitle) + *,
+.article-text > p.quote + * { margin-top: 16px; }
+.article-text > .article-subtitle.article-subtitle + * { margin-top: -8px; }
+
 /* Fala curta dentro de um parágrafo comum */
 .article-text em.fala { font-weight: 500; }
 
@@ -894,6 +913,8 @@ body.menu-open .drawer { transform: translateX(0); }
 
 /* Links no meio do texto: azul claro e sublinhados (como no Figma) */
 .article-text p a { color: var(--azulclaro); text-decoration: underline; text-underline-offset: 2px; }
+/* Dentro do cartão (fundo azul) o link fica na cor do texto do cartão */
+.article-text .cartao p a { color: inherit; }
 
 .article-credito a { color: var(--azulclaro); text-decoration: underline; }
 
@@ -910,6 +931,66 @@ body.menu-open .drawer { transform: translateX(0); }
 /* Vídeo quadrado sozinho: não ocupa a largura toda */
 .article-figura--unica { align-self: center; width: 356px; max-width: 100%; }
 .article-figura--unica .midia-video { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 13px; }
+
+/* ---------- Dado do Olha!Recife (matéria 6; Figma: "animação dado Olha!Recife") ----------
+   Guias entram um a um (como fotógrafos e barqueiros), círculos crescem e contam
+   (como o infográfico da matéria 6) e o barquinho chega navegando. main.js anima. */
+.olha { display: flex; align-items: center; justify-content: center; gap: 48px; margin: 0; padding: 12px 0; font-family: 'Roboto', system-ui, sans-serif; color: var(--azulescuro); }
+.olha__guias { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.olha__pessoas { display: grid; grid-template-columns: repeat(6, 36px); gap: 8px; }
+.olha__pessoa { width: 36px; height: 36px; }
+.article-text .olha__texto { display: flex; flex-direction: column; align-items: center; width: 227px; margin: 0; font-weight: 500; font-size: 20px; line-height: normal; letter-spacing: 0; text-align: center; color: var(--azulescuro); }
+.olha__numero { margin-bottom: -8px; font-weight: 900; font-size: 96px; line-height: normal; font-variant-numeric: tabular-nums; }
+.olha__direita { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.olha__circulos { display: flex; align-items: flex-end; gap: 24px; }
+.olha__item { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 170px; }
+.olha__item--grande { width: 184px; }
+.olha__circulo { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 134px; height: 134px; border-radius: 50%; background: var(--azulescuro); color: var(--fundo); font-weight: 900; line-height: normal; }
+.olha__item--grande .olha__circulo { width: 184px; height: 184px; }
+.olha__num { margin-bottom: -6px; font-size: 56px; font-variant-numeric: tabular-nums; }
+.olha__unid { font-size: 20px; }
+.olha__item--grande .olha__unid { font-size: 24px; }
+.article-text .olha__rotulo { margin: 0; font-weight: 500; font-size: 20px; line-height: normal; letter-spacing: 0; text-align: center; color: var(--azulescuro); }
+.olha__catamara { display: flex; align-items: center; gap: 12px; }
+.article-text .olha__catamara .olha__rotulo { text-align: left; }
+.olha__barco { flex: none; width: 59px; height: 73px; }
+
+/* Animação: só a entrada é animada; esconder é instantâneo */
+.olha.is-esperando .olha__pessoa { opacity: 0; transform: translateY(8px) scale(0.6); }
+.olha.is-esperando .olha__circulo { opacity: 0; transform: scale(0.4); }
+.olha.is-esperando .olha__item .olha__rotulo { opacity: 0; transform: translateY(8px); }
+.olha.is-esperando .olha__barco { opacity: 0; transform: translateX(-80px) rotate(-6deg); }
+.olha.is-esperando .olha__catamara .olha__rotulo { opacity: 0; }
+.olha:not(.is-esperando) .olha__pessoa { transition: opacity 0.35s ease-out, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.olha:not(.is-esperando) .olha__circulo { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out; }
+.olha:not(.is-esperando) .olha__item .olha__rotulo { transition: opacity 0.4s ease-out, transform 0.4s ease-out; }
+.olha:not(.is-esperando) .olha__item--grande .olha__circulo,
+.olha:not(.is-esperando) .olha__item--grande .olha__rotulo { transition-delay: 0.45s; }
+.olha:not(.is-esperando) .olha__item:not(.olha__item--grande) .olha__circulo,
+.olha:not(.is-esperando) .olha__item:not(.olha__item--grande) .olha__rotulo { transition-delay: 0.75s; }
+.olha:not(.is-esperando) .olha__barco { transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1) 1.4s, opacity 0.4s ease-out 1.4s; }
+.olha:not(.is-esperando) .olha__catamara .olha__rotulo { transition: opacity 0.5s ease-out 2s; }
+
+@media (max-width: 1180px) {
+  .olha { flex-direction: column; gap: 28px; padding: 8px 0; }
+  .olha__pessoas { grid-template-columns: repeat(6, 32px); gap: 7px; }
+  .olha__pessoa { width: 32px; height: 32px; }
+  .olha__numero { font-size: 80px; }
+  .olha__circulos { gap: 16px; }
+  .olha__item { width: 140px; }
+  .olha__item--grande { width: 160px; }
+  .olha__circulo { width: 120px; height: 120px; }
+  .olha__item--grande .olha__circulo { width: 160px; height: 160px; }
+  .olha__num { font-size: 48px; }
+  .olha__item--grande .olha__num { font-size: 50px; }
+  .olha__unid, .olha__item--grande .olha__unid { font-size: 18px; }
+  .article-text .olha__rotulo, .article-text .olha__texto { font-size: 16px; }
+  .olha__barco { width: 48px; height: 59px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .olha * { transition: none !important; }
+}
 
 /* ---------- Infográfico da matéria 6 (Figma: "animação infográfico") ----------
    Desktop: posições do Figma (728 × 389). Celular: o círculo grande em cima e
@@ -1194,7 +1275,7 @@ body.menu-open .drawer { transform: translateX(0); }
   .content { display: flex; flex-direction: column; gap: 0; padding: 24px; margin-left: 0; min-width: 0; }
   .content--with-photos { margin-right: 0; padding-left: 24px; }
 
-  .rodape { margin-top: 24px; padding: 20px 0 24px; }
+  .rodape, .article-col > .rodape { margin-top: 32px; padding: 20px 0 24px; } /* 16 (gap) + 32 = 48px antes do rodapé */
   .rodape p { font-size: 13px; line-height: 19px; }
 
   .body-col, .article-col {
@@ -1203,6 +1284,13 @@ body.menu-open .drawer { transform: translateX(0); }
     padding: 12px 0 0 0;
     gap: 12px;
   }
+
+  /* Matéria no celular (proposta de 24/11, ritmo de 8px):
+     topo 24 · voltar→capa 16 · capa→título 24 · título→texto 24 */
+  .article-col { padding-top: 0; gap: 16px; }
+  .article-col > .article-title,
+  .article-col > .destaque,
+  .article-col > .article-text { margin-top: 8px; }
 
   /* O espaço entre fotos e título vem só do padding-bottom da tira de fotos */
   .body-col { padding-top: 0; }
@@ -1257,14 +1345,20 @@ body.menu-open .drawer { transform: translateX(0); }
     .photos::-webkit-scrollbar { display: none; }
   }
 
+  /* Título da matéria no celular: mesmo tamanho dos subtítulos (40/48) */
   .article-title {
-    font-size: 32px;
-    line-height: 36px;
+    font-size: 40px;
+    line-height: 48px;
     letter-spacing: -0.5px;
   }
 
+  /* Subtítulo logo abaixo do título (matéria 4, "Mari Silva…"): menor no celular */
+  .article-subtitle.article-subtitle--menor { font-size: 32px; line-height: 36px; }
+  /* Espaço extra entre o título e o "Mari Silva…" (Figma mobile: 12 + 32 + 12 = 56px) */
+  .article-text > .article-subtitle.article-subtitle--junto.article-subtitle--menor { margin-top: 32px; } /* 24 + 32 = 56px do título */
+
   /* Texto e foto um embaixo do outro, foto na largura toda */
-  .linha { flex-direction: column; align-items: stretch; gap: 12px; }
+  .linha { flex-direction: column; align-items: stretch; gap: 16px; }
   .linha__texto { flex: none; }
   .linha > .linha__foto,
   .linha__figura { flex: none; width: 100%; }
@@ -1276,10 +1370,20 @@ body.menu-open .drawer { transform: translateX(0); }
 
   .midias { gap: 8px; }
 
-  /* Mais respiro entre parágrafos no celular; subtítulos continuam com 64px acima */
-  .article-text { gap: 32px; }
+  /* Texto alinhado à esquerda no celular (justificado abre buracos numa coluna estreita) */
+  .article-text p,
+  .intro p { text-align: left; }
+
+  /* Texto no celular: parágrafos 24 · blocos (foto, citação, dado, cartão) 32 ·
+     antes de subtítulo 48 · subtítulo → texto 16 */
+  .article-text { gap: 24px; }
+  .article-text > :not(p):not(.article-subtitle),
+  .article-text > p.quote,
+  .article-text > :not(p):not(.article-subtitle) + *,
+  .article-text > p.quote + * { margin-top: 8px; }
   .article-text > .article-subtitle:not(:first-child),
-  .article-text > .linha:has(> .article-subtitle) { margin-top: 32px; }
+  .article-text > .linha:has(> .article-subtitle) { margin-top: 24px; }
+  .article-text > .article-subtitle.article-subtitle + * { margin-top: -8px; }
   .article-text > .article-subtitle.article-subtitle--junto { margin-top: 0; }
 
   .destaque { padding: 8px 0 12px; }
